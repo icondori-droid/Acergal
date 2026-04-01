@@ -1072,7 +1072,7 @@ function guardarSolicitud(){
     pagado:false,ref_pago:'',fecha_pago:'',cuentas_asignadas:false,
     vobo:false,vobo_por:'',vobo_fecha:''
   };
-  if(editandoId){
+  id:crypto.randomUUID()
     const idx=solicitudes.findIndex(s=>s.id===editandoId);
     if(idx>=0){
       const prev=solicitudes[idx];
