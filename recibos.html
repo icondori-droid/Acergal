@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acergal - Módulo de Caja</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f2eb;--s:#fff;--s2:#f8f9fa;--b:#e9ecef;
+  --a:#1a1a2e;--t:#212529;--m:#6c757d;--rad:14px;
+  --aqua:#1abc9c;--aqua-dark:#16a085;--aqua-light:#e8f8f5;
+  --r:#dc3545;--rl:#f8d7da;--go:#ffc107;
+  --pag:#0d6efd;--pag-l:#e7f1ff;
+  --ing:#16a34a;--ing-l:#dcfce7;--ing-dark:#14532d;
+  --rend:#7c3aed;--rend-l:#ede9fe;
+  --obs:#fd7e14;--obs-l:#fff3e0;
+  --ctrl:#6f42c1;--ctrl-l:#f0ebff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--t);font-family:'Inter',sans-serif;min-height:100vh;}
+.app{max-width:1300px;margin:0 auto;padding:22px 18px;}
+
+/* Header */
+.hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;padding:14px 16px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:16px;flex-wrap:wrap;gap:12px;box-shadow:0 8px 22px rgba(26,188,156,.08);}
+.hdr h1{font-size:1.5rem;font-weight:700;color:var(--aqua);}
+.hdr p{font-size:.7rem;color:var(--m);margin-top:3px;}
+.nav-links{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.nav-links a{font-size:.72rem;color:#345; text-decoration:none;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.nav-links a:hover{color:var(--aqua-dark);border-color:rgba(26,188,156,.45);background:rgba(232,248,245,.85);}
+.nav-links a.active{color:var(--aqua-dark);font-weight:700;}
+
+/* Tabs */
+.tabs-nav{display:flex;gap:8px;background:rgba(255,255,255,.32);border:1px solid rgba(255,255,255,.4);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:14px;padding:8px;overflow:auto;margin-bottom:22px;flex-wrap:wrap;box-shadow:0 6px 18px rgba(26,188,156,.08);}
+.tab-btn{background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.55);padding:10px 16px;font-weight:700;font-size:.74rem;color:#355;cursor:pointer;white-space:nowrap;border-radius:10px;}
+.tab-btn:hover{background:rgba(232,248,245,.9);border-color:rgba(26,188,156,.45);}
+.tab-btn.active{background:linear-gradient(135deg,var(--aqua),var(--aqua-dark));color:white;border-color:transparent;box-shadow:0 8px 14px rgba(26,188,156,.25);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;animation:fi .2s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* Cards */
+.card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:20px 24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.sec{font-weight:700;font-size:.72rem;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:12px;padding-left:9px;}
+.sec.rp{color:var(--pag);border-left:3px solid var(--pag);}
+.sec.ri{color:var(--ing);border-left:3px solid var(--ing);}
+.sec.rend{color:var(--rend);border-left:3px solid var(--rend);}
+.sec.caja{color:var(--a);border-left:3px solid var(--a);}
+.sec.neutral{color:var(--aqua);border-left:3px solid var(--aqua);}
+
+/* Grids */
+.fg2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:16px;}
+.fg3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
+.fg4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
+.fld{display:flex;flex-direction:column;gap:4px;}
+.fld label{font-size:.6rem;font-weight:600;color:var(--m);text-transform:uppercase;letter-spacing:.4px;}
+.fld label .req{color:var(--r);}
+input,select,textarea{background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 11px;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;width:100%;transition:border-color .15s;}
+input:focus,select:focus,textarea:focus{border-color:var(--aqua);box-shadow:0 0 0 3px rgba(26,188,156,.1);}
+input[readonly]{background:#efefef;cursor:default;}
+
+/* Buttons */
+.form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--b);flex-wrap:wrap;}
+.btn-rp{background:var(--pag);color:white;border:none;border-radius:8px;font-weight:700;font-size:.82rem;padding:10px 22px;cursor:pointer;}
+.btn-rp:hover{background:#0b5ed7;}
+.btn-ri{background:var(--ing);color:white;border:none;border-radius:8px;font-weight:700;font-size:.82rem;padding:10px 22px;cursor:pointer;}
+.btn-ri:hover{background:var(--ing-dark);}
+.btn-rend{background:var(--rend);color:white;border:none;border-radius:8px;font-weight:700;font-size:.82rem;padding:10px 22px;cursor:pointer;}
+.btn-rend:hover{background:#6d28d9;}
+.btn-print{background:var(--go);color:var(--a);border:none;border-radius:8px;font-weight:600;font-size:.82rem;padding:10px 20px;cursor:pointer;}
+.btn-secondary{background:transparent;border:1px solid var(--b);color:var(--m);border-radius:8px;font-weight:600;font-size:.82rem;padding:10px 20px;cursor:pointer;}
+.btn-secondary:hover{border-color:var(--aqua);color:var(--aqua);}
+.btn-danger{background:var(--r);color:white;border:none;border-radius:8px;font-weight:600;font-size:.82rem;padding:8px 16px;cursor:pointer;}
+
+/* Caja summary cards */
+.caja-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.caja-card{border-radius:12px;padding:16px 18px;text-align:center;}
+.caja-card.total{background:linear-gradient(135deg,#1a1a2e,#16213e);color:white;}
+.caja-card.salidas{background:var(--rl);}
+.caja-card.entradas{background:var(--ing-l);}
+.caja-card.pendiente{background:var(--rend-l);}
+.caja-card .cl{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;opacity:.7;}
+.caja-card .cv{font-size:1.4rem;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.caja-card.total .cl,.caja-card.total .cv{color:white;}
+.caja-card.salidas .cv{color:var(--r);}
+.caja-card.entradas .cv{color:var(--ing);}
+.caja-card.pendiente .cv{color:var(--rend);}
+
+/* Lista recibos */
+.tc{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);overflow:hidden;}
+.ttop{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--b);flex-wrap:wrap;gap:10px;}
+.ttitle{font-weight:700;font-size:.92rem;color:var(--a);}
+.filts{display:flex;gap:5px;padding:9px 16px;border-bottom:1px solid var(--b);background:var(--s2);flex-wrap:wrap;align-items:center;}
+.fb{border:1px solid var(--b);border-radius:20px;background:transparent;padding:4px 12px;cursor:pointer;font-size:.64rem;font-weight:500;}
+.fb.on{border-color:var(--aqua);background:var(--aqua-light);color:var(--aqua-dark);font-weight:700;}
+.search-lista{flex:1;min-width:150px;max-width:280px;margin-left:auto;}
+.search-lista input{padding:5px 11px;font-size:.75rem;border-radius:20px;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:.63rem;font-weight:700;text-transform:uppercase;color:var(--m);padding:10px 12px;border-bottom:1px solid var(--b);}
+td{padding:9px 12px;font-size:.8rem;border-bottom:1px solid var(--b);}
+tr:hover td{background:var(--aqua-light);}
+.empty{text-align:center;padding:40px;color:var(--m);}
+
+/* Pills */
+.pill{display:inline-block;font-size:.58rem;font-weight:700;text-transform:uppercase;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.pill.RP{background:var(--pag-l);color:var(--pag);}
+.pill.RI{background:var(--ing-l);color:var(--ing);}
+.pill.REND{background:var(--rend-l);color:var(--rend);}
+.pill.ANULADO{background:var(--rl);color:var(--r);}
+.pill.PENDIENTE{background:#fff3cd;color:#856404;}
+.pill.CERRADO{background:var(--ing-l);color:var(--ing);}
+
+/* Selector de solicitud pendiente */
+.sol-picker{border:1px solid var(--b);border-radius:8px;max-height:220px;overflow-y:auto;}
+.sol-item{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.sol-item:hover{background:var(--aqua-light);}
+.sol-item.sel{background:var(--aqua-light);border-left:3px solid var(--aqua);}
+.sol-item .si-cod{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--aqua);}
+.sol-item .si-info{font-size:.75rem;color:var(--t);}
+.sol-item .si-monto{font-size:.82rem;font-weight:700;color:var(--a);}
+
+/* Badges tipo */
+.tipo-badge{display:inline-block;font-size:.68rem;font-weight:700;padding:4px 12px;border-radius:6px;margin-bottom:12px;}
+.tipo-badge.rp{background:var(--pag-l);color:var(--pag);border:1px solid #93c5fd;}
+.tipo-badge.ri{background:var(--ing-l);color:var(--ing);border:1px solid #86efac;}
+.tipo-badge.rend{background:var(--rend-l);color:var(--rend);border:1px solid #c4b5fd;}
+
+/* Buscadores de persona */
+.search-wrap{position:relative;width:100%;}
+.search-wrap input{width:100%;}
+.search-drop{position:absolute;top:100%;left:0;right:0;background:white;border:1px solid var(--b);border-radius:8px;max-height:220px;overflow-y:auto;z-index:400;display:none;box-shadow:0 4px 14px rgba(0,0,0,.1);}
+.search-drop.show{display:block;}
+.search-drop-item{padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--b);font-size:.8rem;}
+.search-drop-item:hover,.search-drop-item.sel{background:var(--aqua-light);}
+.search-drop-item .sdi-name{font-weight:600;}
+.search-drop-item .sdi-ci{font-size:.66rem;color:var(--m);}
+.search-with-refresh{display:flex;gap:6px;}
+.search-with-refresh .search-wrap{flex:1;}
+.refresh-btn{background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 10px;cursor:pointer;font-size:.9rem;}
+.refresh-btn:hover{background:var(--aqua-light);border-color:var(--aqua);}
+.estado-banner{border-radius:8px;padding:10px 14px;font-size:.76rem;margin-bottom:12px;display:flex;align-items:flex-start;gap:8px;}
+.estado-banner.warn{background:#fff3e0;border:1.5px solid var(--obs);color:#7c3400;}
+.estado-banner.info{background:var(--pag-l);border:1.5px solid #93c5fd;color:#1e3a8a;}
+
+/* Recibo preview inline */
+.recibo-preview{background:white;border:2px solid var(--b);border-radius:8px;padding:14px 18px;margin-top:10px;font-size:.75rem;}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--a);color:#fff;border-radius:10px;padding:12px 20px;font-size:.76rem;z-index:9999;transform:translateY(80px);opacity:0;transition:all .28s;max-width:360px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.err{background:var(--r);}
+.toast.ok{background:var(--aqua);}
+.toast.warn{background:var(--obs);}
+
+/* Modal */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:700;}
+.mo.show{display:flex;}
+.mbox{background:var(--s);border-radius:var(--rad);padding:24px;max-width:700px;width:96%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 50px rgba(0,0,0,.25);}
+.mbtns{display:flex;gap:7px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap;}
+
+/* Anulado */
+.xd{background:transparent;border:none;color:var(--m);cursor:pointer;padding:3px 6px;border-radius:5px;font-size:.74rem;}
+.xd:hover{color:var(--aqua);background:var(--aqua-light);}
+
+/* Widget moneda */
+.currency-widget{display:flex;align-items:center;gap:8px;background:rgba(26,188,156,.08);border:1.5px solid rgba(26,188,156,.3);border-radius:10px;padding:6px 12px;font-size:.72rem;}
+.currency-toggle{display:flex;border-radius:7px;overflow:hidden;border:1px solid var(--b);}
+.currency-toggle button{background:var(--s2);border:none;padding:4px 10px;font-size:.7rem;font-weight:700;cursor:pointer;color:var(--m);transition:all .15s;}
+.currency-toggle button.on{background:var(--aqua);color:white;}
+.tc-input{width:72px;font-size:.72rem;padding:4px 7px;border:1px solid var(--b);border-radius:6px;text-align:right;font-family:'JetBrains Mono',monospace;}
+.amount-usd{font-size:.65rem;color:#2980b9;font-weight:500;margin-left:3px;opacity:.8;}
+
+/* Selector de sucursal */
+#sucScreen{position:fixed;inset:0;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);display:flex;align-items:center;justify-content:center;z-index:9999;}
+.suc-box{text-align:center;padding:40px 36px;max-width:540px;width:94%;}
+.suc-logo{font-size:1.8rem;font-weight:800;color:#1abc9c;letter-spacing:-.5px;margin-bottom:4px;}
+.suc-sub{font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:28px;}
+.suc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px;}
+.suc-card{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:12px;padding:14px 10px;cursor:pointer;transition:all .2s;text-align:center;}
+.suc-card:hover{background:rgba(26,188,156,.15);border-color:#1abc9c;}
+.suc-card.sel{background:rgba(26,188,156,.25);border-color:#1abc9c;box-shadow:0 0 0 3px rgba(26,188,156,.25);}
+.suc-code{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:#1abc9c;margin-bottom:3px;}
+.suc-name{font-size:.8rem;font-weight:600;color:#fff;}
+.suc-btn{background:#1abc9c;color:white;border:none;border-radius:12px;padding:12px 36px;font-size:.95rem;font-weight:700;cursor:pointer;width:100%;}
+.suc-btn:hover{background:#16a085;}
+.suc-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(26,188,156,.15);border:1px solid rgba(26,188,156,.4);border-radius:20px;padding:4px 12px;font-size:.68rem;font-weight:700;color:#1abc9c;font-family:'JetBrains Mono',monospace;cursor:pointer;}
+.suc-badge:hover{background:rgba(26,188,156,.25);}
+
+/* Vínculos en tabla de recibos */
+.vlink{display:inline-flex;align-items:center;gap:3px;font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap;margin:1px;cursor:pointer;text-decoration:none;}
+.vlink.sol{background:var(--aqua-light);color:var(--aqua-dark);border:1px solid rgba(26,188,156,.3);}
+.vlink.ig{background:#ccfbf1;color:#065f46;border:1px solid #6ee7b7;}
+.vlink.rend{background:var(--rend-l);color:var(--rend);border:1px solid #c4b5fd;}
+.vlink.ri{background:var(--ing-l);color:var(--ing-dark);border:1px solid #86efac;}
+.vlink.rp{background:var(--pag-l);color:var(--pag);border:1px solid #93c5fd;}
+.vlink.pend{background:#fff3cd;color:#856404;border:1px solid #fbbf24;}
+/* Modal recibo detalle */
+.rmo{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:800;}
+.rmo.show{display:flex;}
+.rmbox{background:var(--s);border-radius:14px;padding:22px 24px;max-width:560px;width:96%;max-height:90vh;overflow-y:auto;box-shadow:0 16px 40px rgba(0,0,0,.25);}
+.rmtitle{font-size:1rem;font-weight:700;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.rm-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--b);font-size:.78rem;gap:8px;}
+.rm-label{color:var(--m);font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.4px;flex-shrink:0;}
+.rm-val{text-align:right;font-weight:500;}
+.rm-section{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--aqua);margin:12px 0 6px;padding-left:7px;border-left:3px solid var(--aqua);}
+.rm-chain{background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:10px 14px;margin-top:8px;}
+.chain-item{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:.76rem;}
+.chain-item:not(:last-child){border-bottom:1px solid var(--b);}
+.chain-arrow{color:var(--m);font-size:.7rem;}
+  .app{padding:14px 10px;}
+  .fg2,.fg3,.fg4,.caja-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:500px){
+  .fg2,.fg3,.fg4,.caja-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<!-- PANTALLA DE SUCURSAL -->
+<div id="sucScreen">
+  <div class="suc-box">
+    <div class="suc-logo">💳 MÓDULO DE CAJA</div>
+    <div class="suc-sub">Acergal · Selecciona tu sucursal para continuar</div>
+    <div class="suc-grid">
+      <div class="suc-card" onclick="selSuc('N0')" id="sc_N0"><div class="suc-code">N0</div><div class="suc-name">Nery</div></div>
+      <div class="suc-card" onclick="selSuc('Z3')" id="sc_Z3"><div class="suc-code">Z3</div><div class="suc-name">Zofra</div></div>
+      <div class="suc-card" onclick="selSuc('S4')" id="sc_S4"><div class="suc-code">S4</div><div class="suc-name">Santa Cruz</div></div>
+      <div class="suc-card" onclick="selSuc('C5')" id="sc_C5"><div class="suc-code">C5</div><div class="suc-name">Calacoto</div></div>
+      <div class="suc-card" onclick="selSuc('T6')" id="sc_T6"><div class="suc-code">T6</div><div class="suc-name">Tarija</div></div>
+      <div class="suc-card" onclick="selSuc('C8')" id="sc_C8"><div class="suc-code">C8</div><div class="suc-name">Cochabamba</div></div>
+    </div>
+    <button class="suc-btn" onclick="confirmarSuc()">Ingresar →</button>
+  </div>
+</div>
+
+<div id="mainApp" style="display:none;" class="app">
+  <div class="hdr">
+    <div>
+      <h1>💳 MÓDULO DE CAJA</h1>
+      <p id="hdrSucursal">Acergal · Recibos de Pago (RP) e Ingresos (RI)</p>
+    </div>
+    <div class="nav-links">
+      <div class="currency-widget" style="margin-right:8px;">
+        <span style="font-size:.6rem;font-weight:600;color:var(--m);text-transform:uppercase;">Moneda</span>
+        <div class="currency-toggle">
+          <button id="btnBs" class="on" onclick="setMoneda('BS')">Bs</button>
+          <button id="btnUSD" onclick="setMoneda('USD')">USD</button>
+        </div>
+        <span id="tcLabel" style="font-size:.6rem;color:var(--m);display:none;">TC:</span>
+        <input type="number" id="tipoCambio" class="tc-input" value="6.96" step="0.01" min="0.01" onchange="actualizarMoneda()" style="display:none;" title="Bs por 1 USD">
+      </div>
+      <span class="suc-badge" onclick="cambiarSuc()" id="sucBadgeHdr" title="Cambiar sucursal"></span>
+      <a href="solicitudes.html">📋 Solicitudes</a>
+      <a href="reportes.html">📊 Reportes</a>
+      <a href="index.html">⬅ Inicio</a>
+    </div>
+  </div>
+
+  <!-- RESUMEN CAJA -->
+  <div class="caja-grid" id="cajaResumen">
+    <div class="caja-card total"><div class="cl">Saldo en Caja</div><div class="cv" id="cajaSaldo">Bs 0.00</div></div>
+    <div class="caja-card salidas"><div class="cl">Total Salidas (RP)</div><div class="cv" id="cajaSalidas">Bs 0.00</div></div>
+    <div class="caja-card entradas"><div class="cl">Total Ingresos (RI)</div><div class="cv" id="cajaEntradas">Bs 0.00</div></div>
+    <div class="caja-card pendiente"><div class="cl">Pendientes Rendición</div><div class="cv" id="cajaPendRend">0</div></div>
+  </div>
+
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('nuevo-rp',this)">💳 Nuevo RP (de Solicitud)</button>
+    <button class="tab-btn" onclick="switchTab('nuevo-rp-manual',this)">✏️ RP Manual</button>
+    <button class="tab-btn" onclick="switchTab('nuevo-rend',this)">📦 Anticipo con cargo a Rendición</button>
+    <button class="tab-btn" onclick="switchTab('nuevo-ri',this)">💰 Nuevo Recibo de Ingreso (RI)</button>
+    <button class="tab-btn" onclick="switchTab('lista-recibos',this)">📋 Todos los Recibos</button>
+  </div>
+
+  <!-- ═══ TAB: NUEVO RP (Solicitud de Efectivo aprobada) ═══ -->
+  <div id="tab-nuevo-rp" class="tab-pane active">
+    <div class="card">
+      <div class="tipo-badge rp">💳 RECIBO DE PAGO — Salida de efectivo por Solicitud aprobada con VoBo</div>
+      <div class="sec rp">Seleccionar Solicitud con VoBo</div>
+      <div id="solsPendientesRP" class="sol-picker">
+        <div class="empty">Cargando solicitudes con VoBo...</div>
+      </div>
+      <div id="rpSolicitudSeleccionada" style="display:none;margin-top:14px;">
+        <div class="sec rp">Detalle del Pago</div>
+        <div class="fg3">
+          <div class="fld"><label>Código Solicitud</label><input type="text" id="rpCodSol" readonly></div>
+          <div class="fld"><label>Beneficiario</label><input type="text" id="rpBeneficiario" readonly></div>
+          <div class="fld"><label>Monto a Pagar (Bs)</label><input type="number" id="rpMonto" readonly style="font-weight:700;font-size:1rem;color:var(--pag);"></div>
+        </div>
+        <div class="fg3">
+          <div class="fld"><label>Entregado a (nombre completo) <span class="req">*</span></label><input type="text" id="rpEntregadoA" placeholder="Nombre del receptor"></div>
+          <div class="fld"><label>CI del receptor</label><input type="text" id="rpCIReceptor" placeholder="Nº CI"></div>
+          <div class="fld"><label>Forma de pago</label>
+            <select id="rpFormaPago">
+              <option value="Efectivo">Efectivo</option>
+              <option value="Transferencia">Transferencia</option>
+              <option value="Cheque">Cheque</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg2">
+          <div class="fld"><label>N° Cheque / Referencia (si aplica)</label><input type="text" id="rpRefBanco" placeholder="Opcional"></div>
+          <div class="fld"><label>Observación</label><input type="text" id="rpObservacion" placeholder="Opcional"></div>
+        </div>
+        <div class="recibo-preview" id="rpPreview"></div>
+        <div class="form-actions">
+          <button class="btn-secondary" onclick="rpLimpiar()">Cancelar</button>
+          <button class="btn-print" onclick="rpImprimir()">🖨️ Vista previa</button>
+          <button class="btn-rp" onclick="rpGenerar()">✅ Generar Recibo de Pago</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: RP MANUAL (sin solicitud) ═══ -->
+  <div id="tab-nuevo-rp-manual" class="tab-pane">
+    <div class="card">
+      <div class="tipo-badge rp">✏️ RECIBO DE PAGO MANUAL — Pago directo sin solicitud previa</div>
+      <div class="estado-banner info">
+        <span style="font-size:1.1rem;">ℹ️</span>
+        <span>Use este formulario para pagos directos que no provienen de una solicitud de efectivo aprobada. El recibo queda registrado en caja con estado EMITIDO.</span>
+      </div>
+      <div class="sec rp">Seleccionar Informe de Gastos liquidado con saldo a Pagar</div>
+      <div id="igsPendientesRPManual" class="sol-picker">
+        <div class="empty">Cargando informes con saldo a pagar...</div>
+      </div>
+      <div class="sec rp">Beneficiario / Receptor del pago</div>
+      <div class="fg3">
+        <div class="fld">
+          <label>Entregado a <span class="req">*</span></label>
+          <div class="search-with-refresh">
+            <div class="search-wrap">
+              <input type="text" id="rpManualPersonaInput" placeholder="Buscar por nombre o CI..." autocomplete="off"
+                oninput="rpManualFiltrarPersona()" onfocus="rpManualMostrarPersona()" onkeydown="rpManualTecladoPersona(event)">
+              <div id="rpManualPersonaDrop" class="search-drop"></div>
+            </div>
+            <button class="refresh-btn" onclick="recargarPersonasRP()" title="Recargar lista">🔄</button>
+          </div>
+          <input type="hidden" id="rpManualCI">
+        </div>
+        <div class="fld"><label>CI del receptor</label><input type="text" id="rpManualCIDisplay" placeholder="Se llena automáticamente" readonly style="background:#efefef;"></div>
+        <div class="fld"><label>Monto (Bs) <span class="req">*</span></label><input type="number" id="rpManualMonto" step="0.01" placeholder="0.00" oninput="rpManualActualizarPreview()"></div>
+      </div>
+      <div class="sec rp" style="margin-top:4px;">Detalles del Pago</div>
+      <div class="fg3">
+        <div class="fld"><label>Concepto / Descripción <span class="req">*</span></label><input type="text" id="rpManualConcepto" placeholder="Ej: Pago servicios, compra materiales..." oninput="rpManualActualizarPreview()"></div>
+        <div class="fld"><label>Tipo de gasto</label>
+          <select id="rpManualTipoGasto" oninput="rpManualActualizarPreview()">
+            <option value="Operativo">Operativo</option>
+            <option value="Administrativo">Administrativo</option>
+            <option value="Servicios">Servicios</option>
+            <option value="Mantenimiento">Mantenimiento</option>
+            <option value="Transporte">Transporte</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div class="fld"><label>Forma de pago</label>
+          <select id="rpManualFormaPago" oninput="rpManualActualizarPreview()">
+            <option value="Efectivo">Efectivo</option>
+            <option value="Transferencia">Transferencia</option>
+            <option value="Cheque">Cheque</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg3">
+        <div class="fld">
+          <label>Aprobado por</label>
+          <div class="search-with-refresh">
+            <div class="search-wrap">
+              <input type="text" id="rpManualAprobadorInput" placeholder="Buscar aprobador..." autocomplete="off"
+                oninput="rpManualFiltrarAprobador()" onfocus="rpManualMostrarAprobador()" onkeydown="rpManualTecladoAprobador(event)">
+              <div id="rpManualAprobadorDrop" class="search-drop"></div>
+            </div>
+            <button class="refresh-btn" onclick="recargarPersonasRP()" title="Recargar lista">🔄</button>
+          </div>
+          <input type="hidden" id="rpManualAprobadorCI">
+        </div>
+        <div class="fld"><label>N° Cheque / Ref. bancaria (si aplica)</label><input type="text" id="rpManualRefBanco" placeholder="Opcional"></div>
+        <div class="fld"><label>Observación</label><input type="text" id="rpManualObservacion" placeholder="Opcional"></div>
+      </div>
+      <div class="recibo-preview" id="rpManualPreview"></div>
+      <div class="form-actions">
+        <button class="btn-secondary" onclick="rpManualLimpiar()">Cancelar</button>
+        <button class="btn-print" onclick="rpManualVistaPrev()">🖨️ Vista previa</button>
+        <button class="btn-rp" onclick="rpManualGenerar()">✅ Generar Recibo de Pago</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: ANTICIPO CON CARGO A RENDICIÓN ═══ -->
+  <div id="tab-nuevo-rend" class="tab-pane">
+    <div class="card">
+      <div class="tipo-badge rend">📦 ANTICIPO CON CARGO A RENDICIÓN — Empleado recibirá dinero y rendirá después con Informe de Gastos</div>
+      <div class="sec rend">Datos del Anticipo</div>
+      <div class="fg3">
+        <div class="fld">
+          <label>Empleado que recibe <span class="req">*</span></label>
+          <div class="search-with-refresh">
+            <div class="search-wrap">
+              <input type="text" id="rendEmpleado" placeholder="Buscar por nombre o CI..." autocomplete="off"
+                oninput="rendFiltrarPersona()" onfocus="rendMostrarPersona()" onkeydown="rendTecladoPersona(event)">
+              <div id="rendPersonaDrop" class="search-drop"></div>
+            </div>
+            <button class="refresh-btn" onclick="recargarPersonasRP()" title="Recargar lista">🔄</button>
+          </div>
+          <input type="hidden" id="rendCI">
+        </div>
+        <div class="fld"><label>CI del empleado</label><input type="text" id="rendCIDisplay" placeholder="Se llena automáticamente" readonly style="background:#efefef;"></div>
+        <div class="fld"><label>Monto del anticipo (Bs) <span class="req">*</span></label><input type="number" id="rendMonto" step="0.01" placeholder="0.00" oninput="rendActualizarPreview()"></div>
+      </div>
+      <div class="fg3">
+        <div class="fld"><label>Concepto / Motivo <span class="req">*</span></label><input type="text" id="rendMotivo" placeholder="Ej: Viaje a La Paz, compras de insumos..." oninput="rendActualizarPreview()"></div>
+        <div class="fld"><label>Forma de pago</label>
+          <select id="rendFormaPago">
+            <option value="Efectivo">Efectivo</option>
+            <option value="Transferencia">Transferencia</option>
+            <option value="Cheque">Cheque</option>
+          </select>
+        </div>
+        <div class="fld"><label>N° Cheque / Referencia (si aplica)</label><input type="text" id="rendRefBanco" placeholder="Opcional"></div>
+      </div>
+      <div class="fg2">
+        <div class="fld"><label>Fecha estimada de rendición</label><input type="date" id="rendFechaRendicion"></div>
+        <div class="fld"><label>Observación</label><input type="text" id="rendObservacion" placeholder="Opcional"></div>
+      </div>
+      <div style="background:#f0ebff;border:1.5px solid #c4b5fd;border-radius:10px;padding:12px 16px;margin-bottom:12px;font-size:.78rem;color:#4c1d95;">
+        <strong>⚠️ Importante:</strong> Este recibo queda con estado <strong>PENDIENTE DE RENDICIÓN</strong>. El empleado deberá presentar un Informe de Gastos vinculando este número de recibo. El ciclo se cierra cuando el informe sea aprobado y liquidado.
+      </div>
+      <div class="recibo-preview" id="rendPreview"></div>
+      <div class="form-actions">
+        <button class="btn-secondary" onclick="rendLimpiar()">Cancelar</button>
+        <button class="btn-print" onclick="rendImprimir()">🖨️ Vista previa</button>
+        <button class="btn-rend" onclick="rendGenerar()">📦 Generar Anticipo (RP con cargo a rendición)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: NUEVO RI ═══ -->
+  <div id="tab-nuevo-ri" class="tab-pane">
+    <div class="card">
+      <div class="tipo-badge ri">💰 RECIBO DE INGRESO — Entrada de efectivo (devolución de saldo de Informe de Gastos)</div>
+      <div class="sec ri">Seleccionar Informe de Gastos liquidado con saldo a devolver</div>
+      <div id="igsPendientesRI" class="sol-picker">
+        <div class="empty">Cargando informes con saldo a devolver...</div>
+      </div>
+      <div id="riInformeSeleccionado" style="display:none;margin-top:14px;">
+        <div class="sec ri">Detalle del Ingreso</div>
+        <div class="fg3">
+          <div class="fld"><label>Código Informe</label><input type="text" id="riCodIG" readonly></div>
+          <div class="fld"><label>Empleado</label><input type="text" id="riEmpleado" readonly></div>
+          <div class="fld"><label>Monto que devuelve (Bs)</label><input type="number" id="riMonto" readonly style="font-weight:700;font-size:1rem;color:var(--ing);"></div>
+        </div>
+        <div class="fg2">
+          <div class="fld"><label>Forma de recepción</label>
+            <select id="riFormaPago">
+              <option value="Efectivo">Efectivo</option>
+              <option value="Transferencia">Transferencia</option>
+              <option value="Depósito">Depósito</option>
+            </select>
+          </div>
+          <div class="fld"><label>Observación</label><input type="text" id="riObservacion" placeholder="Opcional"></div>
+        </div>
+        <div class="recibo-preview" id="riPreview"></div>
+        <div class="form-actions">
+          <button class="btn-secondary" onclick="riLimpiar()">Cancelar</button>
+          <button class="btn-print" onclick="riImprimir()">🖨️ Vista previa</button>
+          <button class="btn-ri" onclick="riGenerar()">✅ Generar Recibo de Ingreso</button>
+        </div>
+      </div>
+    </div>
+    <!-- Informes con saldo 0 o reembolso pendientes de cierre -->
+    <div id="igsCerrarContainer" class="card" style="margin-top:0;display:none;"></div>
+    <div class="card" style="margin-top:0;">
+      <div class="sec ri">¿No viene de un informe? Registrar ingreso manual</div>
+      <div class="fg3">
+        <div class="fld"><label>Descripción del ingreso <span class="req">*</span></label><input type="text" id="riManualDesc" placeholder="Ej: Devolución efectivo, cobro..."></div>
+        <div class="fld"><label>Persona que entrega <span class="req">*</span></label><input type="text" id="riManualPersona" placeholder="Nombre"></div>
+        <div class="fld"><label>Monto (Bs) <span class="req">*</span></label><input type="number" id="riManualMonto" step="0.01" placeholder="0.00"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-ri" onclick="riManualGenerar()">💰 Generar RI Manual</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: LISTA RECIBOS ═══ -->
+  <div id="tab-lista-recibos" class="tab-pane">
+    <div class="tc">
+      <div class="ttop">
+        <span class="ttitle">Todos los Recibos</span>
+        <span id="totalRecibosLabel" style="font-size:.75rem;color:var(--m);"></span>
+      </div>
+      <div class="filts">
+        <button class="fb on" onclick="filtrarRecibos('all',this)">Todos</button>
+        <button class="fb" onclick="filtrarRecibos('RP',this)">RP Solicitudes</button>
+        <button class="fb" onclick="filtrarRecibos('REND',this)">RP Anticipo/Rendición</button>
+        <button class="fb" onclick="filtrarRecibos('RI',this)">RI Ingresos</button>
+        <button class="fb" onclick="filtrarRecibos('PENDIENTE',this)">Pend. Rendición</button>
+        <div class="search-lista">
+          <input type="text" id="buscarRecibo" placeholder="🔍 Referencia, nombre..." oninput="renderRecibos()">
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr>
+            <th>Referencia</th><th>Fecha</th><th>Tipo</th><th>Concepto</th>
+            <th>Persona</th><th style="text-align:right;">Monto</th>
+            <th>Estado</th><th>Vínculos</th><th style="text-align:center;">Acciones</th>
+          </tr></thead>
+          <tbody id="recibosListBody"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="emptyRecibos" style="display:none;">No hay recibos registrados</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// SUCURSALES
+// ══════════════════════════════════════════════
+const SUCURSALES={
+  N0:{code:'N0',nombre:'Nery',       prefRP:'RPN0',prefRI:'RIN0',prefRend:'RPN0',prefLiq:'LIQN0'},
+  Z3:{code:'Z3',nombre:'Zofra',      prefRP:'RPZ3',prefRI:'RIZ3',prefRend:'RPZ3',prefLiq:'LIQZ3'},
+  S4:{code:'S4',nombre:'Santa Cruz', prefRP:'RPS4',prefRI:'RIS4',prefRend:'RPS4',prefLiq:'LIQS4'},
+  C5:{code:'C5',nombre:'Calacoto',   prefRP:'RPC5',prefRI:'RIC5',prefRend:'RPC5',prefLiq:'LIQC5'},
+  T6:{code:'T6',nombre:'Tarija',     prefRP:'RPT6',prefRI:'RIT6',prefRend:'RPT6',prefLiq:'LIQT6'},
+  C8:{code:'C8',nombre:'Cochabamba', prefRP:'RPC8',prefRI:'RIC8',prefRend:'RPC8',prefLiq:'LIQC8'},
+};
+let sucActual=null, sucSelTemp=null;
+function getSuc(){return SUCURSALES[sucActual]||SUCURSALES['Z3'];}
+function getSucCode(){return getSuc().code;}
+function getSucNombre(){return getSuc().nombre;}
+function getSucLabel(){return sucActual?`${getSucNombre()} (${getSucCode()})`:'Sin sucursal';}
+
+function selSuc(code){
+  sucSelTemp=code;
+  document.querySelectorAll('.suc-card').forEach(c=>c.classList.remove('sel'));
+  document.getElementById(`sc_${code}`)?.classList.add('sel');
+}
+function confirmarSuc(){
+  if(!sucSelTemp){toast('Selecciona una sucursal','err');return;}
+  sucActual=sucSelTemp;
+  document.getElementById('sucScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  // Update header
+  document.getElementById('hdrSucursal').textContent=`Acergal · Módulo de Caja · Sucursal ${getSucLabel()}`;
+  const badge=document.getElementById('sucBadgeHdr');
+  if(badge)badge.textContent=`📍 ${getSucLabel()}`;
+  // Re-init with branch filter
+  init();
+}
+function cambiarSuc(){
+  document.getElementById('sucScreen').style.display='flex';
+  document.getElementById('mainApp').style.display='none';
+  sucSelTemp=null;
+  document.querySelectorAll('.suc-card').forEach(c=>c.classList.remove('sel'));
+}
+
+// ══════════════════════════════════════════════
+// MONEDA / TIPO DE CAMBIO
+// ══════════════════════════════════════════════
+let monedaActual='BS';
+function tcActual(){return parseFloat(document.getElementById('tipoCambio')?.value)||6.96;}
+function fmt(bs){
+  const v=parseFloat(bs)||0;
+  if(monedaActual==='USD') return `$us ${(v/tcActual()).toFixed(2)}`;
+  return `Bs ${v.toFixed(2)}`;
+}
+function fmtDual(bs){
+  const v=parseFloat(bs)||0;
+  if(monedaActual==='USD') return `$us ${(v/tcActual()).toFixed(2)} <span class="amount-usd">(Bs ${v.toFixed(2)})</span>`;
+  return `Bs ${v.toFixed(2)} <span class="amount-usd">($us ${(v/tcActual()).toFixed(2)})</span>`;
+}
+function setMoneda(m){
+  monedaActual=m;
+  document.getElementById('btnBs').classList.toggle('on',m==='BS');
+  document.getElementById('btnUSD').classList.toggle('on',m==='USD');
+  document.getElementById('tcLabel').style.display=m==='USD'?'inline':'none';
+  document.getElementById('tipoCambio').style.display=m==='USD'?'inline-block':'none';
+  actualizarMoneda();
+}
+function actualizarMoneda(){
+  actualizarCaja();
+  renderRecibos();
+  renderSolsPendientesRP();
+  renderIGsPendientesRI();
+  renderIGsPendientesRPManual();
+}
+
+
+// ══════════════════════════════════════════════
+// SUPABASE — Base de datos central multiusuario
+// ══════════════════════════════════════════════
+const SB_URL = 'https://wkkzvcshixpaubvcixrt.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indra3p2Y3NoaXhwYXVidmNpeHJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4ODY4MjEsImV4cCI6MjA5MDQ2MjgyMX0.EiSgv-aSu4nguEzGoIkLIkA90RKjr0e6D8tlQN1t9bA';
+const SB_HEADERS = { 'Content-Type':'application/json', 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` };
+
+// ── Cargar recibos desde Supabase ──
+// Tabla: recibos — columnas: id, codigo, tipo, sucursal, monto, datos (jsonb), created_at
+async function sbCargarRecibos(){
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/recibos?order=created_at.desc&limit=2000`, { headers: SB_HEADERS });
+    if(!r.ok) throw new Error('Error cargando recibos');
+    const data = await r.json();
+    // Reconstruir objetos completos desde datos jsonb
+    recibos = data.map(row => ({
+      ...(row.datos || {}),
+      id: row.id,
+      codigo: row.codigo,
+      tipo: row.tipo,
+      sucursal: row.sucursal,
+      monto: row.monto,
+      created_at: row.created_at
+    }));
+    // Ajustar correlativos
+    corrRP=0; corrRI=0;
+    recibos.forEach(rec=>{
+      if(rec.sucursal!==getSucLabel()) return;
+      const n=parseInt((rec.ref||'').slice(-3))||0;
+      if(rec.tipo==='RP'||rec.tipo==='REND') corrRP=Math.max(corrRP,n);
+      if(rec.tipo==='RI') corrRI=Math.max(corrRI,n);
+    });
+    localStorage.setItem('ac_recibos', JSON.stringify(recibos));
+    return true;
+  } catch(e) {
+    console.warn('Supabase no disponible, usando caché:', e);
+    const c = localStorage.getItem('ac_recibos');
+    if(c) recibos = JSON.parse(c);
+    return false;
+  }
+}
+
+// ── Cargar solicitudes e informes desde Supabase ──
+// Tabla solicitudes: datos jsonb con objeto completo
+// Tabla informes_gastos: datos jsonb con objeto completo
+async function sbCargarSolicitudesEInformes(){
+  try {
+    const [rs, ri] = await Promise.all([
+      fetch(`${SB_URL}/rest/v1/solicitudes?order=created_at.desc&limit=1000`, { headers: SB_HEADERS }),
+      fetch(`${SB_URL}/rest/v1/informes_gastos?order=created_at.desc&limit=1000`, { headers: SB_HEADERS })
+    ]);
+    if(rs.ok){
+      const data = await rs.json();
+      solicitudes = data.map(row => ({ ...(row.datos||{}), id:row.id, codigo:row.codigo, sucursal:row.sucursal, estado:row.estado, monto:row.monto }));
+    }
+    if(ri.ok){
+      const data2 = await ri.json();
+      informes = data2.map(row => ({ ...(row.datos||{}), id:row.id, codigo:row.codigo, sucursal:row.sucursal, estado:row.estado }));
+    }
+    localStorage.setItem('ac_sols', JSON.stringify(solicitudes));
+    localStorage.setItem('ac_igs', JSON.stringify(informes));
+  } catch(e) {
+    const ls = localStorage.getItem('ac_sols'); if(ls) solicitudes=JSON.parse(ls);
+    const li = localStorage.getItem('ac_igs');  if(li) informes=JSON.parse(li);
+  }
+}
+
+// ── Guardar UN recibo en Supabase ──
+async function sbGuardarRecibo(rec){
+  try {
+    const registro = {
+      id: rec.id,
+      codigo: rec.ref || rec.codigo || rec.id,
+      tipo: rec.tipo || 'RP',
+      sucursal: rec.sucursal || '',
+      monto: Number(rec.monto) || 0,
+      datos: rec
+    };
+    const r = await fetch(`${SB_URL}/rest/v1/recibos`, {
+      method: 'POST',
+      headers: { ...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify(registro)
+    });
+    if(!r.ok){ const err=await r.text(); throw new Error(err); }
+    return true;
+  } catch(e) {
+    console.error('Error guardando recibo en Supabase:', e);
+    toast('⚠️ Error de conexión — guardado solo localmente','warn');
+    return false;
+  }
+}
+
+// ── Actualizar campo de recibo en Supabase ──
+async function sbActualizarRecibo(id, campos){
+  try {
+    // Primero traer el registro actual, actualizar datos jsonb y guardar
+    const r = await fetch(`${SB_URL}/rest/v1/recibos?id=eq.${id}`, { headers: SB_HEADERS });
+    if(r.ok){
+      const arr = await r.json();
+      if(arr.length){
+        const datosActualizados = { ...(arr[0].datos||{}), ...campos };
+        await fetch(`${SB_URL}/rest/v1/recibos?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' },
+          body: JSON.stringify({ datos: datosActualizados })
+        });
+      }
+    }
+  } catch(e){ console.error('Error actualizando recibo:', e); }
+}
+
+let recibos=[], solicitudes=[], informes=[], filtRecibos='all';
+let corrRP=0, corrRI=0;
+let rpSolId=null, riIgId=null, rpManualIgId=null;
+
+// ══════════════════════════════════════════════
+// INIT — carga desde localStorage compartido
+// ══════════════════════════════════════════════
+async function init(){
+  await sbCargarSolicitudesEInformes();
+  await sbCargarRecibos();
+  cargarPersonas();
+  renderSolsPendientesRP();
+  renderIGsPendientesRI();
+  renderIGsPendientesRPManual();
+  renderIGsParaCerrar();
+  renderRecibos();
+  actualizarCaja();
+}
+
+// ══════════════════════════════════════════════
+// CORRELATIVOS
+// ══════════════════════════════════════════════
+function genRefRP(){
+  corrRP++;
+  const s=getSuc();
+  const f=new Date(),g=f.getFullYear().toString().slice(-2),m=(f.getMonth()+1).toString().padStart(2,'0');
+  return `${s.prefRP}${g}${m}${corrRP.toString().padStart(3,'0')}`;
+}
+function genRefRI(){
+  corrRI++;
+  const s=getSuc();
+  const f=new Date(),g=f.getFullYear().toString().slice(-2),m=(f.getMonth()+1).toString().padStart(2,'0');
+  return `${s.prefRI}${g}${m}${corrRI.toString().padStart(3,'0')}`;
+}
+
+// ══════════════════════════════════════════════
+// ACTUALIZAR CAJA
+// ══════════════════════════════════════════════
+function actualizarCaja(){
+  const activos=recibos.filter(r=>r.estado!=='ANULADO'&&(!r.sucursal||r.sucursal===getSucLabel()));
+  const salidas=activos.filter(r=>r.tipo==='RP'||r.tipo==='REND').reduce((a,r)=>a+Number(r.monto),0);
+  const entradas=activos.filter(r=>r.tipo==='RI').reduce((a,r)=>a+Number(r.monto),0);
+  const pendRend=activos.filter(r=>r.tipo==='REND'&&r.estado==='PENDIENTE').length;
+  const saldo=entradas-salidas;
+  document.getElementById('cajaSaldo').innerHTML=`${fmt(Math.abs(saldo))}${saldo<0?' ▼':saldo>0?' ▲':''}`;
+  document.getElementById('cajaSalidas').innerHTML=fmt(salidas);
+  document.getElementById('cajaEntradas').innerHTML=fmt(entradas);
+  document.getElementById('cajaPendRend').textContent=pendRend;
+}
+
+function guardarRecibos(){
+  localStorage.setItem('ac_recibos',JSON.stringify(recibos));
+  actualizarCaja();
+  renderRecibos();
+}
+function guardarSolicitudes(s){
+  localStorage.setItem('ac_sols',JSON.stringify(solicitudes));
+  if(s) fetch(`${SB_URL}/rest/v1/solicitudes?id=eq.${s.id}`,{method:'PATCH',headers:{...SB_HEADERS,'Prefer':'return=minimal'},body:JSON.stringify({estado:s.estado,datos:s})}).catch(()=>{});
+}
+function guardarInformes(ig){
+  localStorage.setItem('ac_igs',JSON.stringify(informes));
+  if(ig) fetch(`${SB_URL}/rest/v1/informes_gastos?id=eq.${ig.id}`,{method:"PATCH",headers:{...SB_HEADERS,"Prefer":"return=minimal"},body:JSON.stringify({datos:ig})}).catch(()=>{});
+}
+
+// ══════════════════════════════════════════════
+// TAB: RP — SOLICITUDES CON VOBO
+// ══════════════════════════════════════════════
+function renderSolsPendientesRP(){
+  const container=document.getElementById('solsPendientesRP');
+  const pendientes=solicitudes.filter(s=>
+    s.vobo&&!s.pagado&&s.estado==='VOBO'&&s.estado!=='ANULADO'&&
+    (!s.sucursal||s.sucursal===getSucLabel())
+  );
+  if(!pendientes.length){container.innerHTML='<div class="empty">No hay solicitudes con VoBo pendientes de pago</div>';return;}
+  container.innerHTML=pendientes.map(s=>`
+    <div class="sol-item ${rpSolId===s.id?'sel':''}" onclick="rpSeleccionarSol('${s.id}')">
+      <div>
+        <div class="si-cod">${s.codigo}</div>
+        <div class="si-info">${escH(s.solicitante)} → ${escH(s.beneficiario)}</div>
+        <div class="si-info" style="color:var(--m);font-size:.7rem;">${s.fecha_solicitud} · ${escH(s.tipo_doc_beneficiario)} · VoBo: ${escH(s.vobo_por)}</div>
+      </div>
+      <div class="si-monto">${fmt(s.total)}</div>
+    </div>`).join('');
+}
+
+function rpSeleccionarSol(id){
+  const s=solicitudes.find(x=>x.id===id); if(!s) return;
+  rpSolId=id;
+  document.getElementById('rpCodSol').value=s.codigo;
+  document.getElementById('rpBeneficiario').value=s.beneficiario;
+  document.getElementById('rpMonto').value=s.total;
+  document.getElementById('rpEntregadoA').value=s.solicitante;
+  document.getElementById('rpSolicitudSeleccionada').style.display='block';
+  renderSolsPendientesRP();
+  rpActualizarPreview();
+}
+
+function rpActualizarPreview(){
+  const s=solicitudes.find(x=>x.id===rpSolId); if(!s) return;
+  const ref='[Se generará al confirmar]';
+  const fecha=new Date().toLocaleDateString('es-BO');
+  const entregadoA=document.getElementById('rpEntregadoA').value||s.solicitante;
+  const forma=document.getElementById('rpFormaPago').value||'Efectivo';
+  document.getElementById('rpPreview').innerHTML=htmlReciboSmall({
+    ref,fecha,tipo:'RP',tipLabel:'RECIBO DE PAGO',
+    concepto:`Solicitud de Efectivo ${s.codigo} — ${s.beneficiario}`,
+    monto:s.total,persona:entregadoA,forma,
+    solicitante:s.solicitante,aprobador:s.aprobador
+  });
+}
+
+function rpGenerar(){
+  if(!rpSolId){toast('Seleccione una solicitud','err');return;}
+  const s=solicitudes.find(x=>x.id===rpSolId); if(!s) return;
+  const entregadoA=document.getElementById('rpEntregadoA').value.trim();
+  if(!entregadoA){toast('Ingrese el nombre del receptor','err');return;}
+  const ref=genRefRP();
+  const fecha=new Date().toLocaleDateString('es-BO');
+  const recibo={
+    id:Date.now().toString(), ref, fecha,
+    tipo:'RP', estado:'EMITIDO',
+    sol_id:rpSolId, sol_codigo:s.codigo,
+    concepto:`Solicitud de Efectivo ${s.codigo} — ${escH(s.beneficiario)}`,
+    monto:s.total, persona:entregadoA,
+    ci_receptor:document.getElementById('rpCIReceptor').value||'',
+    forma_pago:document.getElementById('rpFormaPago').value,
+    ref_banco:document.getElementById('rpRefBanco').value||'',
+    observacion:document.getElementById('rpObservacion').value||'',
+    solicitante:s.solicitante, aprobador:s.aprobador,
+    sucursal:getSucLabel()
+  };
+  recibos.unshift(recibo);
+  // Actualizar solicitud como pagada
+  s.pagado=true; s.ref_pago=ref; s.fecha_pago=fecha; s.estado='PAGADO';
+  guardarSolicitudes();
+  guardarRecibos(recibos[0]);
+  toast(`✅ Recibo ${ref} generado`,'ok');
+  rpLimpiar();
+  setTimeout(()=>imprimirRecibo(recibo.id),400);
+}
+
+function rpLimpiar(){
+  rpSolId=null;
+  ['rpCodSol','rpBeneficiario','rpMonto','rpEntregadoA','rpCIReceptor','rpRefBanco','rpObservacion'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('rpSolicitudSeleccionada').style.display='none';
+  document.getElementById('rpPreview').innerHTML='';
+  renderSolsPendientesRP();
+}
+function rpImprimir(){
+  const s=solicitudes.find(x=>x.id===rpSolId); if(!s) return;
+  toast('Primero genera el recibo para imprimir','warn');
+}
+
+// ══════════════════════════════════════════════
+// TAB: ANTICIPO CON CARGO A RENDICIÓN
+// ══════════════════════════════════════════════
+function rendActualizarPreview(){
+  const monto=parseFloat(document.getElementById('rendMonto').value)||0;
+  const motivo=document.getElementById('rendMotivo').value||'Anticipo con cargo a rendición';
+  const empleado=document.getElementById('rendEmpleado').value||'—';
+  document.getElementById('rendPreview').innerHTML=htmlReciboSmall({
+    ref:'[Se generará al confirmar]',
+    fecha:new Date().toLocaleDateString('es-BO'),
+    tipo:'REND',tipLabel:'RECIBO DE PAGO — ANTICIPO CON CARGO A RENDICIÓN',
+    concepto:motivo, monto, persona:empleado,
+    forma:document.getElementById('rendFormaPago').value,
+    nota:'⚠️ Pendiente de rendición con Informe de Gastos'
+  });
+}
+
+function rendGenerar(){
+  const empleado=document.getElementById('rendEmpleado').value.trim();
+  const ci=document.getElementById('rendCI').value.trim();
+  const monto=parseFloat(document.getElementById('rendMonto').value)||0;
+  const motivo=document.getElementById('rendMotivo').value.trim();
+  if(!empleado){toast('Seleccione el empleado de la lista','err');return;}
+  if(!ci){toast('Seleccione el empleado de la lista (debe tener CI)','err');return;}
+  if(monto<=0){toast('Ingrese el monto del anticipo','err');return;}
+  if(!motivo){toast('Ingrese el motivo del anticipo','err');return;}
+  const ref=genRefRP();
+  const fecha=new Date().toLocaleDateString('es-BO');
+  const recibo={
+    id:Date.now().toString(), ref, fecha,
+    tipo:'REND', estado:'PENDIENTE',
+    concepto:motivo, monto, persona:empleado,
+    ci_receptor:ci,
+    forma_pago:document.getElementById('rendFormaPago').value,
+    ref_banco:document.getElementById('rendRefBanco').value||'',
+    fecha_rendicion_est:document.getElementById('rendFechaRendicion').value||'',
+    observacion:document.getElementById('rendObservacion').value||'',
+    sucursal:getSucLabel(),
+    ig_vinculado:'', ig_codigo:''
+  };
+  recibos.unshift(recibo);
+  guardarRecibos(recibos[0]);
+  toast(`✅ Anticipo ${ref} generado — PENDIENTE DE RENDICIÓN`,'ok');
+  rendLimpiar();
+  setTimeout(()=>imprimirRecibo(recibo.id),400);
+}
+
+function rendLimpiar(){
+  ['rendEmpleado','rendCI','rendCIDisplay','rendMonto','rendMotivo','rendRefBanco','rendFechaRendicion','rendObservacion'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('rendPreview').innerHTML='';
+}
+function rendImprimir(){toast('Primero genera el recibo para imprimir','warn');}
+
+// ══════════════════════════════════════════════
+// TAB: RI — INFORMES CON SALDO A DEVOLVER
+// ══════════════════════════════════════════════
+
+function riSeleccionarIG(id){
+  const ig=informes.find(x=>x.id===id); if(!ig) return;
+  riIgId=id;
+  document.getElementById('riCodIG').value=ig.codigo;
+  document.getElementById('riEmpleado').value=ig.empleado;
+  document.getElementById('riMonto').value=ig.saldo;
+  document.getElementById('riInformeSeleccionado').style.display='block';
+  renderIGsPendientesRI();
+  riActualizarPreview();
+}
+
+function riActualizarPreview(){
+  const ig=informes.find(x=>x.id===riIgId); if(!ig) return;
+  document.getElementById('riPreview').innerHTML=htmlReciboSmall({
+    ref:'[Se generará al confirmar]',
+    fecha:new Date().toLocaleDateString('es-BO'),
+    tipo:'RI',tipLabel:'RECIBO DE INGRESO',
+    concepto:`Devolución saldo — Informe ${ig.codigo} (${ig.motivo||''})`,
+    monto:ig.saldo, persona:ig.empleado,
+    forma:document.getElementById('riFormaPago').value
+  });
+}
+
+function riGenerar(){
+  if(!riIgId){toast('Seleccione un informe','err');return;}
+  const ig=informes.find(x=>x.id===riIgId); if(!ig) return;
+  const ref=genRefRI();
+  const fecha=new Date().toLocaleDateString('es-BO');
+  const recibo={
+    id:Date.now().toString(), ref, fecha,
+    tipo:'RI', estado:'EMITIDO',
+    ig_id:riIgId, ig_codigo:ig.codigo,
+    concepto:`Devolución saldo Informe ${ig.codigo} — ${ig.motivo||''}`,
+    monto:ig.saldo, persona:ig.empleado,
+    ci_receptor:ig.empleado_ci||'',
+    forma_pago:document.getElementById('riFormaPago').value,
+    observacion:document.getElementById('riObservacion').value||'',
+    sucursal:getSucLabel()
+  };
+  recibos.unshift(recibo);
+  // Marcar informe como liquidado
+  ig.liquidado=true; ig.ref_liquidacion=ref; ig.fecha_liquidacion=fecha; ig.estado='LIQUIDADO'; ig.ri_generado=true;
+  // ✅ Cerrar el recibo REND vinculado (marcarlo como RENDIDO)
+  cerrarAnticipoRend(ig.ref_anticipo, ig.codigo, ig.id);
+  guardarInformes();
+  guardarRecibos(recibos[0]);
+  toast(`✅ Recibo de Ingreso ${ref} generado — Anticipo RENDIDO`,'ok');
+  riLimpiar();
+  renderIGsParaCerrar();
+  renderIGsPendientesRPManual();
+  setTimeout(()=>imprimirRecibo(recibo.id),400);
+}
+
+function riLimpiar(){
+  riIgId=null;
+  ['riCodIG','riEmpleado','riMonto','riFormaPago','riObservacion'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('riInformeSeleccionado').style.display='none';
+  document.getElementById('riPreview').innerHTML='';
+  renderIGsPendientesRI();
+}
+function riImprimir(){toast('Primero genera el recibo para imprimir','warn');}
+
+function riManualGenerar(){
+  const desc=document.getElementById('riManualDesc').value.trim();
+  const persona=document.getElementById('riManualPersona').value.trim();
+  const monto=parseFloat(document.getElementById('riManualMonto').value)||0;
+  if(!desc||!persona||monto<=0){toast('Complete todos los campos','err');return;}
+  const ref=genRefRI();
+  const recibo={
+    id:Date.now().toString(), ref,
+    fecha:new Date().toLocaleDateString('es-BO'),
+    tipo:'RI', estado:'EMITIDO',
+    concepto:desc, monto, persona,
+    forma_pago:'Efectivo', observacion:'Manual',
+    sucursal:getSucLabel()
+  };
+  recibos.unshift(recibo);
+  guardarRecibos(recibos[0]);
+  toast(`✅ RI Manual ${ref} generado`,'ok');
+  ['riManualDesc','riManualPersona','riManualMonto'].forEach(id=>document.getElementById(id).value='');
+  setTimeout(()=>imprimirRecibo(recibo.id),400);
+}
+
+// ══════════════════════════════════════════════
+// RENDER LISTA RECIBOS
+// ══════════════════════════════════════════════
+function filtrarRecibos(f,btn){
+  filtRecibos=f;
+  document.querySelectorAll('#tab-lista-recibos .fb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderRecibos();
+}
+
+function renderRecibos(){
+  const busq=(document.getElementById('buscarRecibo')?.value||'').toLowerCase().trim();
+  let list=filtRecibos==='all'?[...recibos]:
+    filtRecibos==='PENDIENTE'?recibos.filter(r=>r.estado==='PENDIENTE'):
+    recibos.filter(r=>r.tipo===filtRecibos);
+  // Filter by current branch
+  list=list.filter(r=>!r.sucursal||r.sucursal===getSucLabel());
+  if(busq) list=list.filter(r=>(r.ref||'').toLowerCase().includes(busq)||(r.persona||'').toLowerCase().includes(busq)||(r.concepto||'').toLowerCase().includes(busq));
+  const tbody=document.getElementById('recibosListBody'), empty=document.getElementById('emptyRecibos');
+  document.getElementById('totalRecibosLabel').textContent=`${list.length} recibo(s)`;
+  if(!list.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  tbody.innerHTML=list.map(r=>{
+    // Build vinculos HTML
+    const vinc=buildVinculos(r);
+    return `<tr style="${r.estado==='ANULADO'?'opacity:.5;text-decoration:line-through;':''}">
+    <td style="font-family:monospace;font-weight:700;font-size:.74rem;color:${r.tipo==='RI'?'var(--ing)':r.tipo==='REND'?'var(--rend)':'var(--pag)'};">${r.ref}</td>
+    <td>${r.fecha}</td>
+    <td><span class="pill ${r.tipo}">${r.tipo==='REND'?'RP/REND':r.tipo}</span></td>
+    <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.76rem;">${escH(r.concepto||'—')}</td>
+    <td>${escH(r.persona||'—')}</td>
+    <td style="text-align:right;font-weight:600;color:${r.tipo==='RI'?'var(--ing)':'var(--r)'};">${r.tipo==='RI'?'+':'−'} ${fmt(r.monto)}</td>
+    <td><span class="pill ${r.estado}">${r.estado}</span></td>
+    <td style="max-width:220px;">${vinc||'<span style="font-size:.65rem;color:var(--m);">—</span>'}</td>
+    <td style="text-align:center;white-space:nowrap;">
+      <button class="xd" onclick="verDetalleRecibo('${r.id}')" title="Ver detalle y vínculos">🔍</button>
+      <button class="xd" onclick="imprimirRecibo('${r.id}')">🖨️</button>
+      ${r.estado!=='ANULADO'?`<button class="xd" onclick="anularRecibo('${r.id}')" style="color:var(--r);">✖</button>`:''}
+    </td>
+  </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+// VÍNCULOS — construye las badges de documentos relacionados
+// ══════════════════════════════════════════════
+function buildVinculos(r){
+  const tags=[];
+
+  if(r.tipo==='RP'){
+    // RP de solicitud → muestra código de solicitud
+    if(r.sol_codigo){
+      tags.push(`<span class="vlink sol" title="Solicitud de Efectivo vinculada">📋 ${escH(r.sol_codigo)}</span>`);
+    }
+    if(r.ig_codigo){
+      tags.push(`<span class="vlink ig" title="Informe de Gastos vinculado">📄 ${escH(r.ig_codigo)}</span>`);
+      const rendOrigen=recibos.find(x=>x.tipo==='REND'&&x.ig_vinculado===r.ig_id);
+      if(rendOrigen) tags.push(`<span class="vlink rend" title="Anticipo original">📦 ${escH(rendOrigen.ref)}</span>`);
+    }
+  }
+
+  if(r.tipo==='REND'){
+    // Anticipo con cargo a rendición
+    if(r.estado==='PENDIENTE'){
+      tags.push(`<span class="vlink pend" title="Sin informe de gastos aún">⏳ Sin rendir</span>`);
+    } else if(r.ig_codigo){
+      // Ya rendido — muestra informe vinculado
+      tags.push(`<span class="vlink ig" title="Informe de Gastos que cerró este anticipo">📄 ${escH(r.ig_codigo)}</span>`);
+      // Buscar si ese informe generó un RI (devolución) o fue cierre directo
+      const ig=informes.find(x=>x.id===r.ig_vinculado||x.codigo===r.ig_codigo);
+      if(ig){
+        const riVinc=recibos.find(x=>x.tipo==='RI'&&x.ig_id===ig.id);
+        const rpVinc=recibos.find(x=>x.tipo==='RP'&&x.ig_id===ig.id&&x.subtipo==='REEMBOLSO_IG');
+        if(riVinc){
+          tags.push(`<span class="vlink ri" title="Recibo de Ingreso por devolución de saldo">💰 ${escH(riVinc.ref)}</span>`);
+        } else if(rpVinc){
+          tags.push(`<span class="vlink rp" title="Recibo de Pago por reembolso">💳 ${escH(rpVinc.ref)}</span>`);
+        } else if(ig.liquidado&&Math.round((ig.saldo||0)*100)/100<=0){
+          tags.push(`<span class="vlink ig" title="Cierre directo — sin devolución">✅ Cierre directo</span>`);
+        }
+      }
+    }
+  }
+
+  if(r.tipo==='RI'){
+    // RI de devolución → muestra informe y el REND que lo originó
+    if(r.ig_codigo){
+      tags.push(`<span class="vlink ig" title="Informe de Gastos que generó este ingreso">📄 ${escH(r.ig_codigo)}</span>`);
+    }
+    // Buscar el REND original a través del informe
+    if(r.ig_id){
+      const ig=informes.find(x=>x.id===r.ig_id);
+      if(ig&&ig.ref_anticipo){
+        const rend=recibos.find(x=>x.tipo==='REND'&&x.ref===ig.ref_anticipo);
+        if(rend) tags.push(`<span class="vlink rend" title="Anticipo original que originó este ingreso">📦 ${escH(rend.ref)}</span>`);
+      }
+    }
+  }
+
+  return tags.join('');
+}
+
+// ══════════════════════════════════════════════
+// DETALLE RECIBO — modal con cadena completa
+// ══════════════════════════════════════════════
+function verDetalleRecibo(id){
+  const r=recibos.find(x=>x.id===id);if(!r)return;
+
+  // Build full chain
+  const chain=buildCadena(r);
+
+  const colorTipo=r.tipo==='RI'?'var(--ing)':r.tipo==='REND'?'var(--rend)':'var(--pag)';
+  const labelTipo=r.tipo==='RI'?'Recibo de Ingreso':r.tipo==='REND'?'Anticipo con cargo a Rendición':'Recibo de Pago';
+
+  const modal=document.createElement('div');
+  modal.className='rmo show';
+  modal.onclick=e=>{if(e.target===modal)modal.remove();};
+  modal.innerHTML=`<div class="rmbox">
+    <div class="rmtitle">
+      <span style="color:${colorTipo};font-family:'JetBrains Mono',monospace;">${r.ref}</span>
+      <button onclick="this.closest('.rmo').remove()" style="background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--m);">✕</button>
+    </div>
+    <div style="display:inline-block;background:${colorTipo}22;color:${colorTipo};border:1px solid ${colorTipo}55;border-radius:6px;padding:3px 10px;font-size:.68rem;font-weight:700;margin-bottom:12px;">${labelTipo}</div>
+
+    <div class="rm-row"><span class="rm-label">Fecha</span><span class="rm-val">${r.fecha}</span></div>
+    <div class="rm-row"><span class="rm-label">${r.tipo==='RI'?'Recibido de':'Entregado a'}</span><span class="rm-val">${escH(r.persona||'—')}${r.ci_receptor?` <small style="color:var(--m);">CI: ${r.ci_receptor}</small>`:''}</span></div>
+    <div class="rm-row"><span class="rm-label">Concepto</span><span class="rm-val" style="max-width:300px;text-align:right;">${escH(r.concepto||'—')}</span></div>
+    <div class="rm-row"><span class="rm-label">Forma de pago</span><span class="rm-val">${r.forma_pago||'—'}${r.ref_banco?` · ${r.ref_banco}`:''}</span></div>
+    <div class="rm-row"><span class="rm-label">Monto</span><span class="rm-val" style="font-size:1rem;font-weight:700;color:${colorTipo};">${fmt(r.monto)}</span></div>
+    <div class="rm-row"><span class="rm-label">Estado</span><span class="rm-val"><span class="pill ${r.estado}">${r.estado}</span></span></div>
+    ${r.sucursal?`<div class="rm-row"><span class="rm-label">Sucursal</span><span class="rm-val">${escH(r.sucursal)}</span></div>`:''}
+    ${r.observacion?`<div class="rm-row"><span class="rm-label">Observación</span><span class="rm-val" style="color:var(--obs);">${escH(r.observacion)}</span></div>`:''}
+
+    <div class="rm-section">Cadena de documentos</div>
+    <div class="rm-chain">${chain}</div>
+
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
+      <button onclick="this.closest('.rmo').remove()" style="background:none;border:1px solid var(--b);border-radius:8px;padding:7px 16px;cursor:pointer;font-size:.8rem;color:var(--m);">Cerrar</button>
+      <button onclick="imprimirRecibo('${r.id}')" style="background:var(--go);color:var(--a);border:none;border-radius:8px;padding:7px 16px;cursor:pointer;font-size:.8rem;font-weight:600;">🖨️ Imprimir</button>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+}
+
+function buildCadena(r){
+  const items=[];
+
+  if(r.tipo==='RP'){
+    // Cadena: Solicitud → RP
+    const sol=solicitudes.find(s=>s.id===r.sol_id);
+    if(sol){
+      items.push({icon:'📋',label:'Solicitud de Efectivo',ref:sol.codigo,detail:`${escH(sol.solicitante)} → ${escH(sol.beneficiario)} · ${fmt(sol.total)}`,color:'var(--aqua-dark)',bg:'var(--aqua-light)'});
+    }
+    items.push({icon:'💳',label:'Recibo de Pago',ref:r.ref,detail:`${escH(r.persona||'—')} · ${fmt(r.monto)}`,color:'var(--pag)',bg:'var(--pag-l)',current:true});
+  }
+
+  if(r.tipo==='REND'){
+    // Cadena: REND → Informe → RI (si aplica)
+    items.push({icon:'📦',label:'Anticipo con cargo a Rendición',ref:r.ref,detail:`${escH(r.persona||'—')} · ${fmt(r.monto)}`,color:'var(--rend)',bg:'var(--rend-l)',current:true});
+    if(r.ig_codigo){
+      const ig=informes.find(x=>x.id===r.ig_vinculado||x.codigo===r.ig_codigo);
+      if(ig){
+        items.push({icon:'📄',label:'Informe de Gastos',ref:ig.codigo,detail:`${escH(ig.empleado)} · Gastado: ${fmt(ig.total_gastado)} · Saldo: ${fmt(ig.saldo)}`,color:'#065f46',bg:'#ccfbf1'});
+        const riVinc=recibos.find(x=>x.tipo==='RI'&&x.ig_id===ig.id);
+          const rpVinc=recibos.find(x=>x.tipo==='RP'&&x.ig_id===ig.id&&x.subtipo==='REEMBOLSO_IG');
+        if(riVinc){
+          items.push({icon:'💰',label:'Recibo de Ingreso (devolución)',ref:riVinc.ref,detail:`${escH(riVinc.persona||'—')} · ${fmt(riVinc.monto)}`,color:'var(--ing)',bg:'var(--ing-l)'});
+          } else if(rpVinc){
+            items.push({icon:'💳',label:'Recibo de Pago (reembolso)',ref:rpVinc.ref,detail:`${escH(rpVinc.persona||'—')} · ${fmt(rpVinc.monto)}`,color:'var(--pag)',bg:'var(--pag-l)'});
+        } else if(ig.liquidado&&Math.round((Number(ig.saldo)||0)*100)/100===0){
+          items.push({icon:'✅',label:'Cierre directo',ref:'Sin diferencia',detail:'Liquidación exacta — no requirió RI',color:'var(--aqua-dark)',bg:'var(--aqua-light)'});
+        } else if(ig.liquidado&&Number(ig.saldo)<0){
+          items.push({icon:'💰',label:'Reembolso pendiente',ref:'Empresa debe reembolsar',detail:`Monto a reembolsar: ${fmt(Math.abs(ig.saldo))}`,color:'var(--obs)',bg:'var(--obs-l)'});
+        }
+      } else {
+        items.push({icon:'📄',label:'Informe de Gastos',ref:r.ig_codigo,detail:'Informe vinculado',color:'#065f46',bg:'#ccfbf1'});
+      }
+    } else {
+      items.push({icon:'⏳',label:'Pendiente de rendición',ref:'—',detail:'El empleado aún no ha presentado Informe de Gastos',color:'#856404',bg:'#fff3cd'});
+    }
+  }
+
+  if(r.tipo==='RI'){
+    // Cadena: REND → Informe → RI
+    const ig=informes.find(x=>x.id===r.ig_id);
+    if(ig){
+      // Buscar el REND original
+      const rend=recibos.find(x=>x.tipo==='REND'&&x.ref===ig.ref_anticipo);
+      if(rend){
+        items.push({icon:'📦',label:'Anticipo original',ref:rend.ref,detail:`${escH(rend.persona||'—')} · ${fmt(rend.monto)}`,color:'var(--rend)',bg:'var(--rend-l)'});
+      }
+      items.push({icon:'📄',label:'Informe de Gastos',ref:ig.codigo,detail:`${escH(ig.empleado)} · Gastado: ${fmt(ig.total_gastado)} · Anticipo: ${fmt(ig.anticipo)}`,color:'#065f46',bg:'#ccfbf1'});
+    }
+    items.push({icon:'💰',label:'Recibo de Ingreso (devolución)',ref:r.ref,detail:`${escH(r.persona||'—')} devuelve ${fmt(r.monto)}`,color:'var(--ing)',bg:'var(--ing-l)',current:true});
+  }
+
+  if(!items.length) return '<span style="font-size:.75rem;color:var(--m);">Sin documentos vinculados</span>';
+
+  return items.map((item,i)=>`
+    <div class="chain-item">
+      ${i>0?`<span class="chain-arrow">↳</span>`:''}
+      <span style="font-size:1rem;">${item.icon}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:.65rem;font-weight:600;color:var(--m);text-transform:uppercase;">${item.label}${item.current?' <span style="color:var(--aqua);">(este recibo)</span>':''}</div>
+        <div style="font-family:\'JetBrains Mono\',monospace;font-size:.78rem;font-weight:700;color:${item.color};background:${item.bg};display:inline-block;padding:1px 7px;border-radius:6px;margin-top:2px;">${item.ref}</div>
+        <div style="font-size:.7rem;color:var(--m);margin-top:2px;">${item.detail}</div>
+      </div>
+    </div>`).join('');
+}
+
+function anularRecibo(id){
+  const motivo=prompt('Motivo de anulación:');
+  if(!motivo?.trim()){toast('Indica el motivo','err');return;}
+  const r=recibos.find(x=>x.id===id); if(!r) return;
+  r.estado='ANULADO'; r.motivo_anulacion=motivo;
+  // Si era pago de solicitud, revertirla
+  if(r.sol_id){const s=solicitudes.find(x=>x.id===r.sol_id);if(s){s.pagado=false;s.ref_pago='';s.fecha_pago='';s.estado='VOBO';guardarSolicitudes();}}
+  // Si era liquidación de informe, revertirla Y reabrir el REND vinculado
+  if(r.ig_id){
+    const ig=informes.find(x=>x.id===r.ig_id);
+    if(ig){ig.liquidado=false;ig.ref_liquidacion='';ig.fecha_liquidacion='';ig.estado='APROBADO';guardarInformes();}
+    // Reabrir el REND vinculado al informe
+    if(ig?.ref_anticipo){
+      const rend=recibos.find(x=>x.tipo==='REND'&&x.ref===ig.ref_anticipo&&x.estado==='RENDIDO');
+      if(rend){rend.estado='PENDIENTE';rend.ig_vinculado='';rend.ig_codigo='';rend.fecha_rendicion='';}
+    }
+  }
+  guardarRecibos(recibos[0]);
+  renderIGsPendientesRI();
+  renderIGsParaCerrar();
+  toast('Recibo anulado','ok');
+}
+
+// ══════════════════════════════════════════════
+// IMPRESIÓN — 1/4 hoja + adjunto a solicitud
+// ══════════════════════════════════════════════
+function imprimirRecibo(id){
+  const r=recibos.find(x=>x.id===id); if(!r) return;
+  // Buscar documento padre si existe
+  const solPadre=r.sol_id?solicitudes.find(s=>s.id===r.sol_id):null;
+  const igPadre=r.ig_id?informes.find(ig=>ig.id===r.ig_id):null;
+  abrirVentanaRecibo(r,solPadre,igPadre);
+}
+
+function abrirVentanaRecibo(r,solPadre,igPadre){
+  const esRP=r.tipo==='RP'||r.tipo==='REND';
+  const colorBorde=r.tipo==='RI'?'#16a34a':r.tipo==='REND'?'#7c3aed':'#0d6efd';
+  const colorBg=r.tipo==='RI'?'#dcfce7':r.tipo==='REND'?'#ede9fe':'#e7f1ff';
+  const tipLabel=r.tipo==='RI'?'RECIBO DE INGRESO':r.tipo==='REND'?'RECIBO DE PAGO — ANTICIPO CON CARGO A RENDICIÓN':'RECIBO DE PAGO';
+
+  // HTML del recibo (1/4 carta = ~138mm x 107mm)
+  const reciboHtml=`
+  <div class="recibo-cuarto" style="border:2px solid ${colorBorde};background:white;padding:8mm 9mm;width:138mm;min-height:100mm;font-family:'Inter',Arial,sans-serif;font-size:8pt;line-height:1.4;page-break-inside:avoid;">
+    <table style="width:100%;margin-bottom:5mm;border-bottom:1.5px solid ${colorBorde};padding-bottom:4mm;">
+      <tr>
+        <td style="vertical-align:top;width:60%;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <img src="assets/logo-acergal.png" alt="Logo ACERGAL" style="height:18px;width:auto;object-fit:contain;" onerror="this.style.display='none'">
+            <div style="font-size:8.6pt;font-weight:800;color:${colorBorde};">Aceros Galvanizados SRL ACERGAL</div>
+          </div>
+          <div style="font-size:6pt;color:#6c757d;">Acergal · ${getSucLabel()}</div>
+        </td>
+        <td style="text-align:right;vertical-align:top;">
+          <div style="background:${colorBg};border:1px solid ${colorBorde};border-radius:5px;padding:3px 8px;display:inline-block;">
+            <div style="font-size:6pt;color:${colorBorde};text-transform:uppercase;letter-spacing:1px;">${tipLabel}</div>
+            <div style="font-size:10pt;font-weight:800;font-family:monospace;color:${colorBorde};">${r.ref}</div>
+          </div>
+        </td>
+      </tr>
+    </table>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:4mm;">
+      <tr><td style="width:35%;font-size:6pt;color:#6c757d;font-weight:600;padding:2px 0;">FECHA</td><td style="font-size:7.5pt;">${r.fecha}</td></tr>
+      <tr><td style="font-size:6pt;color:#6c757d;font-weight:600;padding:2px 0;">${esRP?'ENTREGADO A':'RECIBIDO DE'}</td><td style="font-size:7.5pt;font-weight:600;">${escH(r.persona||'—')}</td></tr>
+      ${r.ci_receptor?`<tr><td style="font-size:6pt;color:#6c757d;font-weight:600;padding:2px 0;">CI</td><td style="font-size:7.5pt;">${r.ci_receptor}</td></tr>`:''}
+      <tr><td style="font-size:6pt;color:#6c757d;font-weight:600;padding:2px 0;">CONCEPTO</td><td style="font-size:7.5pt;">${escH(r.concepto||'—')}</td></tr>
+      <tr><td style="font-size:6pt;color:#6c757d;font-weight:600;padding:2px 0;">FORMA DE PAGO</td><td style="font-size:7.5pt;">${r.forma_pago||'—'}${r.ref_banco?' · '+r.ref_banco:''}</td></tr>
+      ${r.observacion?`<tr><td style="font-size:6pt;color:#6c757d;font-weight:600;padding:2px 0;">OBSERVACIÓN</td><td style="font-size:7pt;color:#374151;">${escH(r.observacion)}</td></tr>`:''}
+    </table>
+    <div style="background:${colorBorde};color:white;border-radius:5px;padding:5px 10px;text-align:right;margin-bottom:5mm;">
+      <span style="font-size:7pt;font-weight:600;text-transform:uppercase;">${esRP?'MONTO PAGADO':'MONTO RECIBIDO'}</span>
+      <span style="font-size:13pt;font-weight:800;font-family:monospace;margin-left:10px;">Bs ${Number(r.monto).toFixed(2)}</span>
+      <span style="font-size:7pt;opacity:.85;margin-left:6px;">($us ${(Number(r.monto)/tcActual()).toFixed(2)} · TC ${tcActual()})</span>
+    </div>
+    ${r.estado==='PENDIENTE'?`<div style="background:#fef9c3;border:1px solid #fbbf24;border-radius:4px;padding:4px 8px;font-size:6.5pt;color:#92400e;margin-bottom:4mm;"><strong>⚠️ PENDIENTE DE RENDICIÓN:</strong> Este monto debe rendirse mediante Informe de Gastos.</div>`:''}
+    <table style="width:100%;margin-top:6mm;">
+      <tr>
+        <td style="width:50%;text-align:center;padding:0 5px;">
+          <div style="border-top:1px solid #374151;padding-top:3px;margin-top:14mm;font-size:6pt;">
+            <div style="font-weight:600;">${r.tipo==='RI'?escH(r.persona||'_____'):escH(r.solicitante||r.persona||'_____')}</div>
+            <div style="color:#6c757d;">${r.tipo==='RI'?'Entrega':'Recibe conforme'}</div>
+          </div>
+        </td>
+        <td style="width:50%;text-align:center;padding:0 5px;">
+          <div style="border-top:1px solid #374151;padding-top:3px;margin-top:14mm;font-size:6pt;">
+            <div style="font-weight:600;">${r.tipo==='RI'?'Cajero / Tesorería':escH(r.aprobador||'Cajero / Tesorería')}</div>
+            <div style="color:#6c757d;">${r.tipo==='RI'?'Recibe conforme':'Autoriza y entrega'}</div>
+          </div>
+        </td>
+      </tr>
+    </table>
+    <div style="margin-top:5mm;text-align:center;font-size:5.5pt;color:#adb5bd;">Acergal · ${r.ref} · ${r.fecha} · ${getSucLabel()}</div>
+  </div>`;
+
+  // Si hay documento padre, imprimir completo debajo de él
+  let padreHtml='';
+  if(solPadre) padreHtml=generarHtmlSolicitudParaRecibo(solPadre);
+  else if(igPadre) padreHtml=generarHtmlIGParaRecibo(igPadre);
+
+  const v=window.open('','_blank','width=900,height=700');
+  v.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${r.ref}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#d0d0d0;font-family:'Inter',Arial,sans-serif;}
+    .np{position:sticky;top:0;z-index:99;background:#1a1a2e;display:flex;gap:10px;justify-content:center;align-items:center;padding:9px;}
+    .pagina-completa{width:216mm;margin:7mm auto;background:white;box-shadow:0 4px 22px rgba(0,0,0,.2);}
+    .cuerpo-doc{padding:10mm 11mm;}
+    .recibo-seccion{padding:5mm 11mm 10mm;border-top:2px dashed #b0b0b0;}
+    .solo-recibo{width:138mm;margin:10mm auto;}
+    @media print{
+      body{background:white;}
+      .np{display:none!important;}
+      .pagina-completa,.solo-recibo{margin:0;box-shadow:none;}
+      .cuerpo-doc{padding:9mm 10mm;}
+      .recibo-seccion{padding:4mm 10mm 8mm;}
+      @page{size:letter;margin:0;}
+    }
+  </style></head><body>
+  <div class="np">
+    <button onclick="window.print()" style="background:#1abc9c;color:white;border:none;padding:8px 24px;border-radius:7px;font-weight:700;font-size:13px;cursor:pointer;">🖨️ Imprimir / PDF</button>
+    <button onclick="window.close()" style="background:transparent;color:white;border:1px solid white;padding:8px 16px;border-radius:7px;cursor:pointer;">✕</button>
+    <span style="color:#adb5bd;font-size:10px;">Para PDF: "Guardar como PDF"</span>
+  </div>
+  ${padreHtml?`
+  <div class="pagina-completa">
+    <div class="cuerpo-doc">${padreHtml}</div>
+    <div class="recibo-seccion">${reciboHtml}</div>
+  </div>`:`
+  <div class="solo-recibo" style="margin:15mm auto;">${reciboHtml}</div>`}
+  </body></html>`);
+  v.document.close();
+}
+
+// HTML simplificado de solicitud para adjuntar recibo
+function generarHtmlSolicitudParaRecibo(sol){
+  const filas=(sol.productos||[]).map(p=>`<tr><td style="padding:3px 5px;border-bottom:1px solid #f0f0f0;font-size:6.5pt;">${escH(p.producto_servicio)}</td><td style="padding:3px 5px;border-bottom:1px solid #f0f0f0;font-size:6.5pt;">${escH(p.detalle||'—')}</td><td style="padding:3px 5px;border-bottom:1px solid #f0f0f0;font-size:6.5pt;text-align:center;">${p.cantidad} ${p.unidad_medida}</td><td style="padding:3px 5px;border-bottom:1px solid #f0f0f0;font-size:6.5pt;text-align:right;font-weight:600;">Bs ${Number(p.total_linea).toFixed(2)}</td></tr>`).join('');
+  return `<div style="font-family:'Inter',Arial,sans-serif;font-size:8.5pt;">
+    <table style="width:100%;margin-bottom:8px;border-bottom:2px solid #1abc9c;padding-bottom:6px;"><tr>
+      <td><div style="display:flex;align-items:center;gap:6px;"><img src="assets/logo-acergal.png" alt="Logo ACERGAL" style="height:18px;width:auto;object-fit:contain;" onerror="this.style.display='none'"><div style="font-size:10pt;font-weight:800;color:#1abc9c;">Aceros Galvanizados SRL ACERGAL</div></div><div style="font-size:6.5pt;color:#6c757d;">Acergal · Solicitud de Efectivo · ${getSucLabel()}</div></td>
+      <td style="text-align:right;"><div style="font-size:6pt;color:#6c757d;text-transform:uppercase;">Solicitud de Efectivo</div><div style="font-size:13pt;font-weight:800;font-family:monospace;color:#1abc9c;background:#e8f8f5;border:1px solid #1abc9c;border-radius:5px;padding:3px 10px;display:inline-block;">${sol.codigo}</div></td>
+    </tr></table>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:6px;font-size:7pt;">
+      <tr style="background:#f8f9fa;"><td style="padding:3px 8px;color:#6c757d;font-weight:600;width:14%;">SOLICITANTE</td><td style="padding:3px 8px;">${escH(sol.solicitante)} (CI: ${sol.solicitante_ci})</td><td style="padding:3px 8px;color:#6c757d;font-weight:600;width:14%;">APROBADOR</td><td style="padding:3px 8px;">${escH(sol.aprobador)}</td></tr>
+      <tr><td style="padding:3px 8px;color:#6c757d;font-weight:600;">BENEFICIARIO</td><td style="padding:3px 8px;">${escH(sol.beneficiario)} · NIT: ${sol.nit_ci_beneficiario}</td><td style="padding:3px 8px;color:#6c757d;font-weight:600;">DOC. RESPALDO</td><td style="padding:3px 8px;">${escH(sol.tipo_doc_beneficiario)} N° ${escH(sol.nro_doc_respaldo||'—')}</td></tr>
+    </table>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:6px;">
+      <thead><tr style="background:#1abc9c;color:white;"><th style="padding:4px 5px;font-size:6pt;text-align:left;">Producto/Servicio</th><th style="padding:4px 5px;font-size:6pt;text-align:left;">Detalle</th><th style="padding:4px 5px;font-size:6pt;text-align:center;">Cant.</th><th style="padding:4px 5px;font-size:6pt;text-align:right;">Total</th></tr></thead>
+      <tbody>${filas}</tbody>
+    </table>
+    <table style="width:100%;"><tr><td style="width:62%;"></td><td>
+      <table style="width:100%;border-collapse:collapse;border:1px solid #1abc9c;">
+        <tr style="background:#f8f9fa;"><td style="padding:3px 8px;font-size:6pt;color:#6c757d;font-weight:600;">SUBTOTAL</td><td style="padding:3px 8px;font-size:7pt;text-align:right;">Bs ${Number(sol.subtotal).toFixed(2)}</td></tr>
+        <tr><td style="padding:3px 8px;font-size:6pt;color:#6c757d;font-weight:600;">DESCUENTO</td><td style="padding:3px 8px;font-size:7pt;text-align:right;">Bs ${Number(sol.descuento||0).toFixed(2)}</td></tr>
+        <tr style="background:#1abc9c;"><td style="padding:5px 8px;font-size:8pt;font-weight:800;color:white;">TOTAL</td><td style="padding:5px 8px;font-size:9pt;font-weight:800;color:white;text-align:right;">Bs ${Number(sol.total).toFixed(2)}</td></tr>
+      </table>
+    </td></tr></table>
+    <table style="width:100%;margin-top:10mm;"><tr>
+      <td style="width:33%;text-align:center;padding:0 6px;"><div style="border-top:1px solid #212529;padding-top:3px;margin-top:18mm;font-size:6pt;"><div style="font-weight:600;">${escH(sol.solicitante||'_____')}</div><div style="color:#6c757d;">Solicitante · CI: ${sol.solicitante_ci||'—'}</div></div></td>
+      <td style="width:33%;text-align:center;padding:0 6px;"><div style="border-top:1px solid #212529;padding-top:3px;margin-top:18mm;font-size:6pt;"><div style="font-weight:600;">${escH(sol.aprobador||'_____')}</div><div style="color:#6c757d;">Aprobador · Firma y sello</div></div></td>
+      <td style="width:33%;text-align:center;padding:0 6px;"><div style="border-top:1px solid #212529;padding-top:3px;margin-top:18mm;font-size:6pt;"><div style="font-weight:600;">Control Posterior</div><div style="color:#6c757d;">Contabilidad</div></div></td>
+    </tr></table>
+  </div>`;
+}
+
+function generarHtmlIGParaRecibo(ig){
+  return `<div style="font-family:'Inter',Arial,sans-serif;font-size:8.5pt;">
+    <table style="width:100%;margin-bottom:8px;border-bottom:2px solid #0f766e;padding-bottom:6px;"><tr>
+      <td><div style="display:flex;align-items:center;gap:6px;"><img src="assets/logo-acergal.png" alt="Logo ACERGAL" style="height:18px;width:auto;object-fit:contain;" onerror="this.style.display='none'"><div style="font-size:10pt;font-weight:800;color:#0f766e;">Aceros Galvanizados SRL ACERGAL</div></div><div style="font-size:6.5pt;color:#6c757d;">Acergal · Informe de Gastos · ${getSucLabel()}</div></td>
+      <td style="text-align:right;"><div style="font-size:13pt;font-weight:800;font-family:monospace;color:#0f766e;background:#ccfbf1;border:1px solid #0f766e;border-radius:5px;padding:3px 10px;display:inline-block;">${ig.codigo}</div></td>
+    </tr></table>
+    <table style="width:100%;border-collapse:collapse;font-size:7pt;">
+      <tr style="background:#f0fdf4;"><td style="padding:3px 8px;color:#6c757d;font-weight:600;width:14%;">EMPLEADO</td><td style="padding:3px 8px;">${escH(ig.empleado)} (CI: ${ig.empleado_ci||'—'})</td><td style="padding:3px 8px;color:#6c757d;font-weight:600;width:14%;">APROBADOR</td><td style="padding:3px 8px;">${escH(ig.aprobador)}</td></tr>
+      <tr><td style="padding:3px 8px;color:#6c757d;font-weight:600;">MOTIVO</td><td colspan="3" style="padding:3px 8px;">${escH(ig.motivo||'—')} · Período: ${ig.periodo_desde||'—'} al ${ig.periodo_hasta||'—'}</td></tr>
+      <tr style="background:#f0fdf4;"><td style="padding:3px 8px;color:#6c757d;font-weight:600;">ANTICIPO</td><td style="padding:3px 8px;font-weight:700;color:#0f766e;">Bs ${Number(ig.anticipo).toFixed(2)} · Ref: ${escH(ig.ref_anticipo||'—')}</td><td style="padding:3px 8px;color:#6c757d;font-weight:600;">TOTAL GASTADO</td><td style="padding:3px 8px;font-weight:700;">Bs ${Number(ig.total_gastado).toFixed(2)}</td></tr>
+    </table>
+    <table style="width:100%;margin-top:8mm;"><tr>
+      <td style="width:33%;text-align:center;padding:0 6px;"><div style="border-top:1px solid #212529;padding-top:3px;margin-top:18mm;font-size:6pt;"><div style="font-weight:600;">${escH(ig.empleado||'_____')}</div><div style="color:#6c757d;">Empleado que rinde</div></div></td>
+      <td style="width:33%;text-align:center;padding:0 6px;"><div style="border-top:1px solid #212529;padding-top:3px;margin-top:18mm;font-size:6pt;"><div style="font-weight:600;">${escH(ig.aprobador||'_____')}</div><div style="color:#6c757d;">Aprobador · Firma y sello</div></div></td>
+      <td style="width:33%;text-align:center;padding:0 6px;"><div style="border-top:1px solid #212529;padding-top:3px;margin-top:18mm;font-size:6pt;"><div style="font-weight:600;">Control Posterior</div><div style="color:#6c757d;">Contabilidad</div></div></td>
+    </tr></table>
+  </div>`;
+}
+
+// HTML pequeño para preview inline
+function htmlReciboSmall(d){
+  const colorBorde=d.tipo==='RI'?'#16a34a':d.tipo==='REND'?'#7c3aed':'#0d6efd';
+  return `<div style="border:1.5px solid ${colorBorde};border-radius:8px;padding:10px 14px;background:white;font-size:.75rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;border-bottom:1px solid ${colorBorde};padding-bottom:6px;">
+      <div style="font-weight:700;color:${colorBorde};font-size:.7rem;text-transform:uppercase;">${d.tipLabel}</div>
+      <div style="font-family:monospace;font-size:.8rem;font-weight:700;color:${colorBorde};">${d.ref}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.71rem;">
+      <div><span style="color:#6c757d;font-size:.6rem;text-transform:uppercase;">Fecha</span><br><strong>${d.fecha}</strong></div>
+      <div><span style="color:#6c757d;font-size:.6rem;text-transform:uppercase;">${d.tipo==='RI'?'Recibido de':'Entregado a'}</span><br><strong>${escH(d.persona||'—')}</strong></div>
+      <div style="grid-column:1/-1;"><span style="color:#6c757d;font-size:.6rem;text-transform:uppercase;">Concepto</span><br>${escH(d.concepto||'—')}</div>
+      <div><span style="color:#6c757d;font-size:.6rem;text-transform:uppercase;">Forma de pago</span><br>${d.forma||'Efectivo'}</div>
+      <div style="text-align:right;"><span style="color:#6c757d;font-size:.6rem;text-transform:uppercase;">Monto</span><br><strong style="font-size:1rem;color:${colorBorde};">Bs ${(parseFloat(d.monto)||0).toFixed(2)}</strong><br><span style="font-size:.62rem;color:#2980b9;">$us ${((d.monto||0)/tcActual()).toFixed(2)}</span></div>
+    </div>
+    ${d.nota?`<div style="margin-top:7px;background:#fef9c3;border-radius:5px;padding:4px 8px;font-size:.66rem;color:#92400e;">${d.nota}</div>`:''}
+  </div>`;
+}
+
+// ══════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════
+function switchTab(tabName,btn){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  const t=document.getElementById(`tab-${tabName}`);if(t)t.classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(tabName==='nuevo-rp') renderSolsPendientesRP();
+  if(tabName==='nuevo-rp-manual') renderIGsPendientesRPManual();
+  if(tabName==='nuevo-ri'){renderIGsPendientesRI();renderIGsParaCerrar();}
+}
+function escH(str){if(!str)return '';return str.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}
+function toast(msg,tipo){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast show ${tipo||'ok'}`;setTimeout(()=>t.classList.remove('show'),3500);}
+
+// ══════════════════════════════════════════════
+// BASE DE DATOS DE PERSONAS (mismo que solicitudes)
+// ══════════════════════════════════════════════
+const API_SOLIC='https://script.google.com/macros/s/AKfycbyFuF7cPzAjUpLdp6aTmt5yATptnXhsBlSGDS2d8uw3Zb7D_U9zngx7Kq4LwESPLKM33Q/exec';
+let personasDB=[];
+
+async function cargarPersonas(){
+  try{
+    const r=await fetch(`${API_SOLIC}?accion=getAll`);
+    const d=await r.json();
+    if(d.success&&d.solicitantes){personasDB=d.solicitantes;localStorage.setItem('ac_solic',JSON.stringify(personasDB));return true;}
+  }catch{
+    const c=localStorage.getItem('ac_solic');
+    if(c)personasDB=JSON.parse(c);
+  }
+  return false;
+}
+async function recargarPersonasRP(){
+  toast('Actualizando personas...','ok');
+  const ok=await cargarPersonas();
+  toast(ok?`✅ ${personasDB.length} personas cargadas`:'⚠️ Usando caché local',ok?'ok':'warn');
+}
+function buscarPersonas(texto){
+  if(!texto||!texto.trim())return personasDB.slice(0,10);
+  const b=texto.toLowerCase().trim();
+  return personasDB.filter(p=>p.nombre.toLowerCase().includes(b)||p.ci.includes(b)).slice(0,10);
+}
+
+// ── BUSCADOR GENÉRICO (factory) ──
+function crearBuscadorPersona(inputId,dropId,hiddenCiId,ciDisplayId,onSelect){
+  let idx=-1;
+  function render(){
+    const inp=document.getElementById(inputId);
+    const drop=document.getElementById(dropId);
+    if(!inp||!drop)return;
+    const lista=buscarPersonas(inp.value);
+    if(!lista.length){drop.innerHTML='<div class="search-drop-item" style="color:var(--m);">Sin resultados</div>';drop.classList.add('show');return;}
+    drop.innerHTML=lista.map((p,i)=>`<div class="search-drop-item${i===idx?' sel':''}" onmousedown="event.preventDefault()" onclick="_selPersona('${inputId}','${dropId}','${hiddenCiId}','${ciDisplayId?ciDisplayId:''}','${p.ci}')"><div class="sdi-name">${escH(p.nombre)}</div><div class="sdi-ci">CI: ${p.ci}</div></div>`).join('');
+    drop.classList.add('show');
+  }
+  function teclado(e){
+    const drop=document.getElementById(dropId);
+    if(!drop?.classList.contains('show'))return;
+    const items=drop.querySelectorAll('.search-drop-item');
+    if(e.key==='ArrowDown'){e.preventDefault();idx=Math.min(idx+1,items.length-1);}
+    else if(e.key==='ArrowUp'){e.preventDefault();idx=Math.max(idx-1,0);}
+    else if(e.key==='Enter'){e.preventDefault();const inp=document.getElementById(inputId);const lista=buscarPersonas(inp?.value);if(idx>=0&&lista[idx])_selPersona(inputId,dropId,hiddenCiId,ciDisplayId||'',lista[idx].ci);}
+    else if(e.key==='Escape'){drop.classList.remove('show');idx=-1;}
+    items.forEach((it,i)=>it.classList.toggle('sel',i===idx));
+  }
+  return {render,teclado};
+}
+
+function _selPersona(inputId,dropId,hiddenCiId,ciDisplayId,ci){
+  const p=personasDB.find(x=>x.ci===ci);if(!p)return;
+  const inp=document.getElementById(inputId);if(inp)inp.value=p.nombre;
+  const hid=document.getElementById(hiddenCiId);if(hid)hid.value=p.ci;
+  const disp=document.getElementById(ciDisplayId);if(disp)disp.value=p.ci;
+  document.getElementById(dropId)?.classList.remove('show');
+}
+
+document.addEventListener('click',e=>{
+  document.querySelectorAll('.search-drop').forEach(d=>{
+    if(!d.closest('.search-wrap')?.contains(e.target))d.classList.remove('show');
+  });
+});
+
+// Instancias de buscadores
+const _rpManualP=crearBuscadorPersona('rpManualPersonaInput','rpManualPersonaDrop','rpManualCI','rpManualCIDisplay');
+const _rpManualA=crearBuscadorPersona('rpManualAprobadorInput','rpManualAprobadorDrop','rpManualAprobadorCI','');
+const _rendP=crearBuscadorPersona('rendEmpleado','rendPersonaDrop','rendCI','rendCIDisplay');
+
+function rpManualFiltrarPersona(){_rpManualP.render();rpManualActualizarPreview();}
+function rpManualMostrarPersona(){_rpManualP.render();}
+function rpManualTecladoPersona(e){_rpManualP.teclado(e);}
+function rpManualFiltrarAprobador(){_rpManualA.render();}
+function rpManualMostrarAprobador(){_rpManualA.render();}
+function rpManualTecladoAprobador(e){_rpManualA.teclado(e);}
+function rendFiltrarPersona(){_rendP.render();rendActualizarPreview();}
+function rendMostrarPersona(){_rendP.render();}
+function rendTecladoPersona(e){_rendP.teclado(e);}
+
+// ══════════════════════════════════════════════
+// RP MANUAL
+// ══════════════════════════════════════════════
+function rpManualActualizarPreview(){
+  const persona=document.getElementById('rpManualPersonaInput')?.value||'—';
+  const monto=parseFloat(document.getElementById('rpManualMonto')?.value)||0;
+  const concepto=document.getElementById('rpManualConcepto')?.value||'—';
+  const forma=document.getElementById('rpManualFormaPago')?.value||'Efectivo';
+  if(!persona||!monto)return;
+  document.getElementById('rpManualPreview').innerHTML=htmlReciboSmall({
+    ref:'[Se generará al confirmar]',
+    fecha:new Date().toLocaleDateString('es-BO'),
+    tipo:'RP',tipLabel:'RECIBO DE PAGO MANUAL',
+    concepto,monto,persona,forma
+  });
+}
+
+function rpManualVistaPrev(){rpManualActualizarPreview();}
+
+function rpManualGenerar(){
+  const persona=document.getElementById('rpManualPersonaInput')?.value.trim();
+  const ci=document.getElementById('rpManualCI')?.value.trim();
+  const monto=parseFloat(document.getElementById('rpManualMonto')?.value)||0;
+  const concepto=document.getElementById('rpManualConcepto')?.value.trim();
+  const tipoGasto=document.getElementById('rpManualTipoGasto')?.value;
+  const aprobador=document.getElementById('rpManualAprobadorInput')?.value.trim();
+  if(!persona){toast('Seleccione el receptor del pago','err');return;}
+  if(monto<=0){toast('Ingrese un monto válido','err');return;}
+  if(!concepto){toast('Ingrese el concepto del pago','err');return;}
+  const ref=genRefRP();
+  const fecha=new Date().toLocaleDateString('es-BO');
+  const recibo={
+    id:Date.now().toString(), ref, fecha,
+    tipo:'RP', subtipo:'MANUAL', estado:'EMITIDO',
+    concepto:`[MANUAL] ${concepto}`,
+    monto, persona,
+    ci_receptor:ci||'',
+    aprobador:aprobador||'',
+    aprobador_ci:document.getElementById('rpManualAprobadorCI')?.value||'',
+    tipo_gasto:tipoGasto||'Operativo',
+    forma_pago:document.getElementById('rpManualFormaPago')?.value||'Efectivo',
+    ref_banco:document.getElementById('rpManualRefBanco')?.value||'',
+    observacion:document.getElementById('rpManualObservacion')?.value||'',
+    sucursal:getSucLabel()
+  };
+  recibos.unshift(recibo);
+  guardarRecibos(recibos[0]);
+  toast(`✅ RP Manual ${ref} generado`,'ok');
+  rpManualLimpiar();
+  setTimeout(()=>imprimirRecibo(recibo.id),400);
+}
+
+function renderIGsPendientesRPManual(){
+  const container=document.getElementById('igsPendientesRPManual');
+  if(!container) return;
+  const pendientes=informes.filter(ig=>{
+    const mismaSucursal=!ig.sucursal||ig.sucursal===getSucLabel();
+    const saldoNeg=Number(ig.saldo)<0;
+    const listo=ig.vobo&&ig.liquidado&&saldoNeg;
+    const yaGenerado=recibos.some(r=>r.tipo==='RP'&&r.ig_id===ig.id&&r.subtipo==='REEMBOLSO_IG'&&r.estado!=='ANULADO');
+    return mismaSucursal&&listo&&!yaGenerado;
+  });
+  if(!pendientes.length){
+    container.innerHTML='<div class="empty">No hay informes con saldo a pagar pendientes de RP</div>';
+    return;
+  }
+  container.innerHTML=pendientes.map(ig=>`
+    <div class="sol-item ${rpManualIgId===ig.id?'sel':''}" onclick="rpManualSeleccionarIG('${ig.id}')">
+      <div>
+        <div class="si-cod">${ig.codigo}</div>
+        <div class="si-info">${escH(ig.empleado)} · ${escH(ig.motivo||'—')}</div>
+        <div class="si-info" style="color:var(--m);font-size:.7rem;">Anticipo: ${fmt(ig.anticipo)} · Gastado: ${fmt(ig.total_gastado)}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
+        <div class="si-monto" style="color:var(--r);">Pagar ${fmt(Math.abs(ig.saldo))}</div>
+        <button class="btn-rp" style="padding:6px 12px;font-size:.72rem;" onclick="event.stopPropagation();rpManualGenerarDesdeIG('${ig.id}')">💳 Generar RP</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function rpManualSeleccionarIG(igId){
+  const ig=informes.find(x=>x.id===igId); if(!ig) return;
+  rpManualIgId=igId;
+  document.getElementById('rpManualPersonaInput').value=ig.empleado||'';
+  document.getElementById('rpManualCI').value=ig.empleado_ci||'';
+  document.getElementById('rpManualCIDisplay').value=ig.empleado_ci||'';
+  document.getElementById('rpManualMonto').value=Math.abs(Number(ig.saldo)||0).toFixed(2);
+  document.getElementById('rpManualConcepto').value=`Reembolso diferencia Informe ${ig.codigo}`;
+  rpManualActualizarPreview();
+  renderIGsPendientesRPManual();
+}
+
+function rpManualGenerarDesdeIG(igId){
+  const ig=informes.find(x=>x.id===igId); if(!ig) return;
+  const monto=Math.abs(Number(ig.saldo)||0);
+  if(monto<=0){toast('El informe no tiene saldo a pagar','err');return;}
+  const existe=recibos.some(r=>r.tipo==='RP'&&r.ig_id===ig.id&&r.subtipo==='REEMBOLSO_IG'&&r.estado!=='ANULADO');
+  if(existe){toast('Ya existe un RP de reembolso para este informe','warn');return;}
+  const ref=genRefRP();
+  const fecha=new Date().toLocaleDateString('es-BO');
+  const recibo={
+    id:Date.now().toString(), ref, fecha,
+    tipo:'RP', subtipo:'REEMBOLSO_IG', estado:'EMITIDO',
+    ig_id:ig.id, ig_codigo:ig.codigo,
+    concepto:`Reembolso diferencia Informe ${ig.codigo} — ${ig.motivo||''}`,
+    monto, persona:ig.empleado||'',
+    ci_receptor:ig.empleado_ci||'',
+    aprobador:ig.aprobador||'',
+    aprobador_ci:ig.aprobador_ci||'',
+    forma_pago:'Efectivo',
+    observacion:'Generado automáticamente desde Informe liquidado',
+    sucursal:getSucLabel()
+  };
+  recibos.unshift(recibo);
+  ig.rp_reembolso_generado=true;
+  cerrarAnticipoRend(ig.ref_anticipo,ig.codigo,ig.id);
+  guardarInformes();
+  guardarRecibos(recibos[0]);
+  renderIGsPendientesRPManual();
+  renderIGsParaCerrar();
+  toast(`✅ RP ${ref} generado por reembolso de ${ig.codigo}`,'ok');
+  setTimeout(()=>imprimirRecibo(recibo.id),400);
+}
+
+function rpManualLimpiar(){
+  ['rpManualPersonaInput','rpManualCI','rpManualCIDisplay','rpManualMonto','rpManualConcepto',
+   'rpManualAprobadorInput','rpManualAprobadorCI','rpManualRefBanco','rpManualObservacion'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  document.getElementById('rpManualPreview').innerHTML='';
+}
+
+// ══════════════════════════════════════════════
+// CRUCE: Cuando se liquida un informe, marcar el REND como RENDIDO
+// Esta función se llama desde recibos.html al procesar liquidaciones
+// ══════════════════════════════════════════════
+function cerrarAnticipoRend(refAnticipo, igCodigo, igId){
+  // Buscar el recibo REND que tiene la ref del anticipo
+  const rend=recibos.find(r=>r.tipo==='REND'&&(r.ref===refAnticipo||r.id===refAnticipo)&&r.estado!=='ANULADO');
+  if(rend){
+    rend.estado='RENDIDO';
+    rend.ig_vinculado=igId||'';
+    rend.ig_codigo=igCodigo||'';
+    rend.fecha_rendicion=new Date().toLocaleDateString('es-BO');
+    return true;
+  }
+  return false;
+}
+
+// ══════════════════════════════════════════════
+// CRUCE DE INFORMES CON RECIBOS — Lógica de estados
+// El flujo correcto es:
+//   REND creado → PENDIENTE
+//   Informe presentado y aprobado (VoBo) → puede liquidarse
+//   Liquidación:
+//     Si saldo > 0 (empleado devuelve): generar RI + marcar REND como RENDIDO + informe LIQUIDADO
+//     Si saldo <= 0 (empresa reembolsa o exacto): marcar REND como RENDIDO + informe LIQUIDADO
+// ══════════════════════════════════════════════
+function renderIGsPendientesRI(){
+  const container=document.getElementById('igsPendientesRI');
+  // Informes liquidados con saldo positivo (empleado devuelve), sin RI generado
+  const pendientes=informes.filter(ig=>{
+    const mismaSucursal=!ig.sucursal||ig.sucursal===getSucLabel();
+    const yaGenerado=recibos.some(r=>r.tipo==='RI'&&r.ig_id===ig.id&&r.estado!=='ANULADO');
+    return ig.vobo&&ig.liquidado&&Number(ig.saldo)>0&&mismaSucursal&&!yaGenerado;
+  });
+  if(!pendientes.length){container.innerHTML='<div class="empty">No hay informes con saldo a devolver pendientes</div>';return;}
+  container.innerHTML=pendientes.map(ig=>`
+    <div class="sol-item ${riIgId===ig.id?'sel':''}" onclick="riSeleccionarIG('${ig.id}')">
+      <div>
+        <div class="si-cod">${ig.codigo}</div>
+        <div class="si-info">${escH(ig.empleado)} · ${escH(ig.motivo||'—')}</div>
+        <div class="si-info" style="color:var(--m);font-size:.7rem;">Anticipo: ${fmt(ig.anticipo)} · Gastado: ${fmt(ig.total_gastado)} · Ref REND: ${escH(ig.ref_anticipo||'—')}</div>
+      </div>
+      <div class="si-monto" style="color:var(--ing);">Devuelve ${fmt(ig.saldo)}</div>
+    </div>`).join('');
+}
+
+// También mostrar informes con VoBo y saldo <= 0 que no se han marcado como liquidados
+// (empresa reembolsa o exacto — no generan RI pero deben poder cerrarse)
+function renderIGsParaCerrar(){
+  const container=document.getElementById('igsCerrarContainer');
+  if(!container)return;
+  const pendientes=informes.filter(ig=>{
+    const mismaSucursal=!ig.sucursal||ig.sucursal===getSucLabel();
+    const exacto=Math.round((Number(ig.saldo)||0)*100)/100===0;
+    return ig.vobo&&ig.liquidado&&exacto&&mismaSucursal;
+  });
+  if(!pendientes.length){container.style.display='none';return;}
+  container.style.display='block';
+  container.innerHTML=`
+    <div class="sec ri" style="margin-top:16px;">Informes aprobados pendientes de cierre (saldo cero o reembolso)</div>
+    <div style="margin-bottom:8px;font-size:.73rem;color:var(--m);">Estos informes ya están liquidados con saldo exacto. Confírmelos para cerrar el ciclo del anticipo.</div>
+    ${pendientes.map(ig=>`
+    <div class="sol-item" style="cursor:default;">
+      <div>
+        <div class="si-cod">${ig.codigo}</div>
+        <div class="si-info">${escH(ig.empleado)} · ${escH(ig.motivo||'—')}</div>
+        <div class="si-info" style="color:var(--m);font-size:.7rem;">Anticipo: ${fmt(ig.anticipo)} · Gastado: ${fmt(ig.total_gastado)}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <span style="font-size:.75rem;font-weight:700;color:var(--aqua);">Exacto</span>
+        <button class="btn-ri" style="padding:6px 14px;font-size:.72rem;" onclick="cerrarInformeSinRI('${ig.id}')">✅ Confirmar cierre</button>
+      </div>
+    </div>`).join('')}`;
+}
+
+function cerrarInformeSinRI(igId){
+  const ig=informes.find(x=>x.id===igId);if(!ig)return;
+  const ref=`CIE${igId.slice(-6)}`;
+  const fecha=new Date().toLocaleDateString('es-BO');
+  // Marcar informe como liquidado
+  ig.liquidado=true;ig.ref_liquidacion=ref;ig.fecha_liquidacion=fecha;ig.estado='LIQUIDADO';
+  // Cerrar el REND vinculado
+  cerrarAnticipoRend(ig.ref_anticipo,ig.codigo,ig.id);
+  guardarInformes();
+  guardarRecibos(recibos[0]);
+  renderIGsPendientesRI();
+  renderIGsParaCerrar();
+  actualizarCaja();
+  toast(`✅ Informe ${ig.codigo} cerrado`,'ok');
+}
+
+// Init runs after branch selection via confirmarSuc()
+</script>
+</body>
+</html>

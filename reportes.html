@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acergal - Reportes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f2eb;--s:#fff;--s2:#f8f9fa;--b:#e9ecef;
+  --a:#1a1a2e;--t:#212529;--m:#6c757d;--rad:14px;
+  --aqua:#1abc9c;--aqua-dark:#16a085;--aqua-light:#e8f8f5;
+  --r:#dc3545;--rl:#f8d7da;--go:#ffc107;
+  --pag:#0d6efd;--pag-l:#e7f1ff;
+  --ing:#16a34a;--ing-l:#dcfce7;
+  --ctrl:#6f42c1;--ctrl-l:#f0ebff;
+  --rend:#7c3aed;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--t);font-family:'Inter',sans-serif;min-height:100vh;}
+.app{max-width:1380px;margin:0 auto;padding:22px 18px;}
+.hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;padding:14px 16px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:16px;flex-wrap:wrap;gap:12px;box-shadow:0 8px 22px rgba(26,188,156,.08);}
+.hdr h1{font-size:1.5rem;font-weight:700;color:var(--aqua-dark);}
+.hdr p{font-size:.7rem;color:var(--m);margin-top:3px;}
+.nav-links{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.nav-links a{font-size:.72rem;color:#345;text-decoration:none;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.nav-links a:hover{color:var(--aqua-dark);border-color:rgba(26,188,156,.45);background:rgba(232,248,245,.85);}
+.tabs-nav{display:flex;gap:8px;background:rgba(255,255,255,.32);border:1px solid rgba(255,255,255,.4);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:14px;padding:8px;overflow:auto;margin-bottom:20px;flex-wrap:wrap;box-shadow:0 6px 18px rgba(26,188,156,.08);}
+.tab-btn{background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.55);padding:10px 16px;font-weight:700;font-size:.74rem;color:#355;cursor:pointer;white-space:nowrap;border-radius:10px;}
+.tab-btn:hover{background:rgba(232,248,245,.9);border-color:rgba(26,188,156,.45);}
+.tab-btn.active{background:linear-gradient(135deg,var(--aqua),var(--aqua-dark));color:white;border-color:transparent;box-shadow:0 8px 14px rgba(26,188,156,.25);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;animation:fi .2s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:20px 24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.sec{font-weight:700;font-size:.72rem;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:14px;padding-left:9px;border-left:3px solid var(--aqua);color:var(--aqua-dark);}
+.fg2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:16px;}
+.fg3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
+.fg4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
+.fg5{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:16px;}
+.fld{display:flex;flex-direction:column;gap:4px;}
+.fld label{font-size:.6rem;font-weight:600;color:var(--m);text-transform:uppercase;}
+input,select{background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 11px;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;width:100%;}
+input:focus,select:focus{border-color:var(--aqua);box-shadow:0 0 0 3px rgba(26,188,156,.1);}
+.btn-primary{background:var(--aqua);color:white;border:none;border-radius:8px;font-weight:600;font-size:.8rem;padding:10px 22px;cursor:pointer;}
+.btn-primary:hover{background:var(--aqua-dark);}
+.btn-secondary{background:transparent;border:1px solid var(--b);color:var(--m);border-radius:8px;font-weight:600;font-size:.8rem;padding:10px 20px;cursor:pointer;}
+.btn-secondary:hover{border-color:var(--aqua);color:var(--aqua);}
+.btn-print{background:var(--go);color:var(--a);border:none;border-radius:8px;font-weight:600;font-size:.8rem;padding:10px 20px;cursor:pointer;}
+.btn-export{background:var(--ing);color:white;border:none;border-radius:8px;font-weight:600;font-size:.8rem;padding:10px 20px;cursor:pointer;}
+.btn-ctrl{background:var(--ctrl);color:white;border:none;border-radius:8px;font-weight:600;font-size:.8rem;padding:10px 20px;cursor:pointer;}
+.form-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
+
+/* Tabla general */
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:.63rem;font-weight:700;text-transform:uppercase;color:var(--m);padding:10px 12px;border-bottom:1px solid var(--b);white-space:nowrap;}
+td{padding:9px 12px;font-size:.79rem;border-bottom:1px solid var(--b);}
+tr:hover td{background:var(--aqua-light);}
+.empty{text-align:center;padding:44px;color:var(--m);}
+.pill{display:inline-block;font-size:.56rem;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:20px;white-space:nowrap;}
+.pill.SOL{background:var(--aqua-light);color:var(--aqua-dark);}
+.pill.IG{background:var(--ing-l);color:var(--ing);}
+.pill.factura{background:var(--ctrl-l);color:var(--ctrl);}
+.pill.noFact{background:#e9ecef;color:#495057;}
+
+/* Totales footer */
+.tfoot-total{background:linear-gradient(90deg,var(--aqua-light),#f0fdf4);font-weight:700;}
+.tfoot-total td{border-top:2px solid var(--aqua);padding:10px 12px;}
+
+/* Declarar toggle */
+.decl-sel{font-size:.7rem;padding:3px 7px;border-radius:6px;border:1px solid var(--b);cursor:pointer;}
+.decl-si{background:var(--ing-l);color:var(--ing);border-color:#86efac;}
+.decl-no{background:var(--rl);color:var(--r);border-color:#fca5a5;}
+
+/* KPI strip */
+.kpi-strip{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px;}
+.kpi-s{background:var(--s);border:1px solid var(--b);border-radius:10px;padding:12px 18px;flex:1;min-width:130px;text-align:center;}
+.kpi-s .kv{font-size:1.15rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--a);}
+.kpi-s .kl{font-size:.59rem;font-weight:600;text-transform:uppercase;color:var(--m);margin-top:2px;}
+
+.toast{position:fixed;bottom:20px;right:20px;background:var(--a);color:#fff;border-radius:10px;padding:12px 20px;font-size:.76rem;z-index:9999;transform:translateY(80px);opacity:0;transition:all .28s;max-width:360px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.ok{background:var(--aqua);}
+.toast.err{background:var(--r);}
+@media(max-width:800px){.fg2,.fg3,.fg4,.fg5{grid-template-columns:1fr 1fr;}}
+@media(max-width:500px){.fg2,.fg3,.fg4,.fg5{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="app">
+  <div class="hdr">
+    <div><h1>🧾 REPORTES Y REGISTRO DE COMPRAS</h1><p>Acergal · Reportes consolidados · Sucursal Zofra (Z3)</p></div>
+    <div class="nav-links">
+      <a href="solicitudes.html">📋 Solicitudes</a>
+      <a href="informes.html">📄 Informes</a>
+      <a href="recibos.html">💳 Caja</a>
+      <a href="contabilidad.html">📊 Contabilidad</a>
+      <a href="index.html">⬅ Inicio</a>
+    </div>
+  </div>
+
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('reg-compras',this)">🧾 Registro de Compras</button>
+    <button class="tab-btn" onclick="switchTab('consolidado',this)">📊 Reporte Consolidado</button>
+    <button class="tab-btn" onclick="switchTab('por-beneficiario',this)">👤 Por Beneficiario</button>
+    <button class="tab-btn" onclick="switchTab('flujo-caja',this)">💰 Flujo de Caja</button>
+    <button class="tab-btn" onclick="switchTab('pendientes',this)">⏳ Pendientes</button>
+  </div>
+
+  <!-- ═══ REGISTRO DE COMPRAS ═══ -->
+  <div id="tab-reg-compras" class="tab-pane active">
+    <div class="card">
+      <div class="sec">Filtros — Registro de Compras Unificado</div>
+      <div class="fg5">
+        <div class="fld"><label>Período (mes)</label><select id="rcPeriodo"><option value="">Todos</option></select></div>
+        <div class="fld"><label>Tipo de Factura</label>
+          <select id="rcTipoFact">
+            <option value="">Todos</option>
+            <option value="Manual">Manual</option>
+            <option value="Electrónica">Electrónica</option>
+            <option value="Computarizada">Computarizada</option>
+            <option value="Prevalorada">Prevalorada</option>
+          </select>
+        </div>
+        <div class="fld"><label>Tipo de Crédito Fiscal</label>
+          <select id="rcTipoCF">
+            <option value="">Todos</option>
+            <option value="Con Derecho a CF">Con Derecho a CF</option>
+            <option value="Sin Derecho a CF">Sin Derecho a CF</option>
+            <option value="Tasa Cero IVA">Tasa Cero IVA</option>
+          </select>
+        </div>
+        <div class="fld"><label>Declarar</label>
+          <select id="rcDeclarar">
+            <option value="">Todos</option>
+            <option value="Declarar">Declarar</option>
+            <option value="No declarar">No declarar</option>
+          </select>
+        </div>
+        <div class="fld"><label>Fuente</label>
+          <select id="rcFuente">
+            <option value="">Solicitudes e Informes</option>
+            <option value="SOL">Solo Solicitudes</option>
+            <option value="IG">Solo Informes de Gastos</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-primary" onclick="renderRegCompras()">🔍 Aplicar filtros</button>
+        <button class="btn-print" onclick="imprimirRegCompras()">🖨️ Imprimir</button>
+        <button class="btn-export" onclick="exportarCSV()">📥 Exportar CSV</button>
+      </div>
+      <div class="kpi-strip" id="rcKPIs"></div>
+      <div style="overflow-x:auto;"><div id="regComprasContainer"><div class="empty">Aplica los filtros para ver el registro</div></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ CONSOLIDADO ═══ -->
+  <div id="tab-consolidado" class="tab-pane">
+    <div class="card">
+      <div class="sec">Reporte General Consolidado</div>
+      <div class="fg4">
+        <div class="fld"><label>Fecha Desde</label><input type="date" id="consDesde"></div>
+        <div class="fld"><label>Fecha Hasta</label><input type="date" id="consHasta"></div>
+        <div class="fld"><label>Estado Solicitud</label>
+          <select id="consEstSol"><option value="">Todos</option><option value="PENDIENTE">Pendiente</option><option value="VOBO">Con VoBo</option><option value="PAGADO">Pagado</option><option value="CONTROLADO">Controlado</option></select>
+        </div>
+        <div class="fld"><label>Estado Informe</label>
+          <select id="consEstIG"><option value="">Todos</option><option value="PRESENTADO">Presentado</option><option value="APROBADO">Aprobado</option><option value="LIQUIDADO">Liquidado</option><option value="CONTABILIZADO">Contabilizado</option></select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-primary" onclick="renderConsolidado()">📊 Generar reporte</button>
+        <button class="btn-print" onclick="imprimirConsolidado()">🖨️ Imprimir</button>
+      </div>
+      <div id="consolidadoContainer"><div class="empty">Genera el reporte para ver resultados</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ POR BENEFICIARIO ═══ -->
+  <div id="tab-por-beneficiario" class="tab-pane">
+    <div class="card">
+      <div class="sec">Gastos por Beneficiario / Proveedor</div>
+      <div class="fg3">
+        <div class="fld"><label>Período</label><select id="benePeriodo"><option value="">Todos</option></select></div>
+        <div class="fld"><label>Beneficiario (contiene)</label><input type="text" id="beneBuscar" placeholder="Nombre o NIT..."></div>
+        <div class="fld"><label>Tipo documento</label>
+          <select id="beneTipoDoc"><option value="">Todos</option><option value="Factura">Factura</option><option value="Nota Fiscal">Nota Fiscal</option><option value="Recibo">Recibo</option></select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-primary" onclick="renderPorBeneficiario()">🔍 Ver</button>
+        <button class="btn-print" onclick="imprimirBene()">🖨️ Imprimir</button>
+      </div>
+      <div id="beneContainer"><div class="empty">Aplica filtros</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ FLUJO DE CAJA ═══ -->
+  <div id="tab-flujo-caja" class="tab-pane">
+    <div class="card">
+      <div class="sec">Flujo de Caja — Recibos emitidos</div>
+      <div class="fg3">
+        <div class="fld"><label>Período</label><select id="flujoPeriodo"><option value="">Todos</option></select></div>
+        <div class="fld"><label>Tipo</label>
+          <select id="flujoTipo"><option value="">Todos</option><option value="RP">Salidas (RP)</option><option value="REND">Anticipos Rendición</option><option value="RI">Entradas (RI)</option></select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-primary" onclick="renderFlujoCaja()">💰 Ver flujo</button>
+        <button class="btn-print" onclick="imprimirFlujo()">🖨️ Imprimir</button>
+      </div>
+      <div id="flujoContainer"><div class="empty">Aplica filtros</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ PENDIENTES ═══ -->
+  <div id="tab-pendientes" class="tab-pane">
+    <div class="card">
+      <div class="sec">Solicitudes pendientes de VoBo o pago</div>
+      <div style="overflow-x:auto;" id="pendSolContainer"><div class="empty">Cargando...</div></div>
+    </div>
+    <div class="card">
+      <div class="sec">Anticipos pendientes de rendición</div>
+      <div style="overflow-x:auto;" id="pendRendContainer"><div class="empty">Cargando...</div></div>
+    </div>
+    <div class="card">
+      <div class="sec">Informes de gastos sin aprobar / liquidar</div>
+      <div style="overflow-x:auto;" id="pendIGContainer"><div class="empty">Cargando...</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATOS
+// ══════════════════════════════════════════════
+let solicitudes=[], informes=[], recibos=[];
+
+function cargarDatos(){
+  solicitudes=JSON.parse(localStorage.getItem('ac_sols')||'[]');
+  informes=JSON.parse(localStorage.getItem('ac_igs')||'[]');
+  recibos=JSON.parse(localStorage.getItem('ac_recibos')||'[]');
+  cargarPeriodos();
+  renderRegCompras();
+  renderPendientes();
+}
+
+function cargarPeriodos(){
+  const periodos=[...new Set([
+    ...solicitudes.map(s=>(s.fecha_solicitud||'').substring(0,7)),
+    ...informes.map(g=>(g.fecha_creacion||'').substring(0,7)),
+    ...recibos.map(r=>(r.fecha||'').replace(/\//g,'-').split('-').reverse().join('-').substring(0,7))
+  ].filter(Boolean))].sort().reverse();
+  ['rcPeriodo','benePeriodo','flujoPeriodo'].forEach(id=>{
+    const sel=document.getElementById(id); if(!sel) return;
+    sel.innerHTML='<option value="">Todos</option>'+periodos.map(p=>`<option value="${p}">${p}</option>`).join('');
+  });
+}
+
+// ══════════════════════════════════════════════
+// REGISTRO DE COMPRAS UNIFICADO
+// ══════════════════════════════════════════════
+function obtenerFacturasUnificadas(){
+  const registros=[];
+  // Facturas de SOLICITUDES
+  solicitudes.filter(s=>s.tipo_doc_beneficiario==='Factura'&&s.estado!=='ANULADO').forEach(s=>{
+    if(s.estado==='CONTROLADO'||s.estado==='PAGADO'){
+      registros.push({
+        fuente:'SOL', codigo:s.codigo, fecha:s.fecha_doc_beneficiario||s.fecha_solicitud,
+        periodo:(s.fecha_doc_beneficiario||s.fecha_solicitud||'').substring(0,7),
+        nit:s.nit_ci_beneficiario, beneficiario:s.beneficiario,
+        nro_doc:s.nro_doc_respaldo||'—',
+        tipo_factura:s.tipo_factura||'—', tipo_cf:s.tipo_credito||'—',
+        cod_aut:s.cod_autorizacion||'', cod_ctrl:s.cod_control||'',
+        total_doc:Number(s.total_documento||0), descuento:Number(s.descuento||0),
+        ref_pago:s.ref_pago||'—', declarar:s.declarar||'Declarar'
+      });
+    }
+  });
+  // Facturas de INFORMES DE GASTOS
+  informes.filter(ig=>ig.estado==='CONTABILIZADO'||ig.estado==='LIQUIDADO').forEach(ig=>{
+    (ig.docs||[]).filter(d=>d.tipo==='Factura').forEach(doc=>{
+      registros.push({
+        fuente:'IG', codigo:ig.codigo, fecha:doc.fecha_doc||ig.fecha_creacion,
+        periodo:(doc.fecha_doc||ig.fecha_creacion||'').substring(0,7),
+        nit:doc.nit||'—', beneficiario:doc.proveedor||'—',
+        nro_doc:doc.nro_doc||'—',
+        tipo_factura:doc.tipo_factura||'—', tipo_cf:doc.tipo_cf||'—',
+        cod_aut:doc.cod_autorizacion||'', cod_ctrl:doc.cod_control||'',
+        total_doc:Number(doc.total||0), descuento:0,
+        ref_pago:ig.ref_liquidacion||'—', declarar:doc.declarar||'Declarar'
+      });
+    });
+  });
+  return registros.sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
+}
+
+function calcularICF(r){
+  if(r.tipo_cf==='Con Derecho a CF'){
+    const neto=r.total_doc-r.descuento;
+    return Math.round(neto*(13/113)*100)/100;
+  }
+  return 0;
+}
+
+function renderRegCompras(){
+  let recs=obtenerFacturasUnificadas();
+  const periodo=document.getElementById('rcPeriodo')?.value||'';
+  const tipoFact=document.getElementById('rcTipoFact')?.value||'';
+  const tipoCF=document.getElementById('rcTipoCF')?.value||'';
+  const declarar=document.getElementById('rcDeclarar')?.value||'';
+  const fuente=document.getElementById('rcFuente')?.value||'';
+  if(periodo) recs=recs.filter(r=>r.periodo===periodo);
+  if(tipoFact) recs=recs.filter(r=>r.tipo_factura===tipoFact);
+  if(tipoCF) recs=recs.filter(r=>r.tipo_cf===tipoCF);
+  if(declarar) recs=recs.filter(r=>(r.declarar||'Declarar')===declarar);
+  if(fuente) recs=recs.filter(r=>r.fuente===fuente);
+
+  const decl=recs.filter(r=>(r.declarar||'Declarar')==='Declarar');
+  const totDoc=decl.reduce((a,r)=>a+r.total_doc,0);
+  const totDesc=decl.reduce((a,r)=>a+r.descuento,0);
+  const totICF=decl.reduce((a,r)=>a+calcularICF(r),0);
+
+  // KPIs
+  document.getElementById('rcKPIs').innerHTML=`
+    <div class="kpi-s"><div class="kv">${recs.length}</div><div class="kl">Total facturas</div></div>
+    <div class="kpi-s"><div class="kv">${decl.length}</div><div class="kl">A declarar</div></div>
+    <div class="kpi-s"><div class="kv">Bs ${totDoc.toFixed(2)}</div><div class="kl">Total documentado</div></div>
+    <div class="kpi-s"><div class="kv">Bs ${totDesc.toFixed(2)}</div><div class="kl">Descuentos</div></div>
+    <div class="kpi-s" style="border-top:3px solid var(--ctrl);"><div class="kv" style="color:var(--ctrl);">Bs ${totICF.toFixed(2)}</div><div class="kl">ICF (13%) Total</div></div>`;
+
+  if(!recs.length){document.getElementById('regComprasContainer').innerHTML='<div class="empty">No hay facturas para los filtros seleccionados</div>';return;}
+
+  const filas=recs.map((r,i)=>{
+    const icf=calcularICF(r);
+    const esDecl=(r.declarar||'Declarar')==='Declarar';
+    return `<tr style="${!esDecl?'opacity:.5;background:#fafafa;':''}">
+      <td><select class="decl-sel ${esDecl?'decl-si':'decl-no'}" onchange="rcSetDeclarar('${r.fuente}','${r.codigo}','${r.nro_doc}',this.value,this)">
+        <option value="Declarar" ${esDecl?'selected':''}>Declarar</option>
+        <option value="No declarar" ${!esDecl?'selected':''}>No declarar</option>
+      </select></td>
+      <td><span class="pill ${r.fuente}">${r.fuente}</span></td>
+      <td style="font-family:monospace;font-size:.72rem;color:var(--ctrl);">${r.tipo_factura||'—'}</td>
+      <td style="font-size:.72rem;">${r.tipo_cf||'—'}</td>
+      <td style="font-family:monospace;font-size:.72rem;">${r.nit}</td>
+      <td>${escH(r.beneficiario)}</td>
+      <td style="font-family:monospace;font-size:.72rem;">${escH(r.nro_doc)}</td>
+      <td>${r.fecha||'—'}</td>
+      <td style="text-align:right;font-weight:600;">Bs ${r.total_doc.toFixed(2)}</td>
+      <td style="text-align:right;">${r.descuento>0?'Bs '+r.descuento.toFixed(2):'—'}</td>
+      <td style="text-align:right;font-weight:600;color:var(--ctrl);">${icf>0?'Bs '+icf.toFixed(2):'—'}</td>
+      <td style="font-family:monospace;font-size:.68rem;">${r.cod_aut||'—'}</td>
+      <td style="font-family:monospace;font-size:.68rem;">${r.cod_ctrl||'—'}</td>
+      <td style="font-family:monospace;font-size:.7rem;color:var(--m);">${r.ref_pago}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('regComprasContainer').innerHTML=`
+    <table id="tablaRegCompras">
+      <thead><tr>
+        <th>Declarar</th><th>Fuente</th><th>Tipo Fact.</th><th>Tipo CF</th>
+        <th>NIT / CI</th><th>Beneficiario / Proveedor</th><th>N° Documento</th>
+        <th>Fecha</th><th style="text-align:right;">Total Doc.</th>
+        <th style="text-align:right;">Descuento</th>
+        <th style="text-align:right;color:var(--ctrl);">ICF (13%)</th>
+        <th>Cód. Aut.</th><th>Cód. Ctrl.</th><th>Ref. Pago</th>
+      </tr></thead>
+      <tbody>${filas}</tbody>
+      <tfoot><tr class="tfoot-total">
+        <td colspan="8">TOTALES (declarados: ${decl.length} de ${recs.length})</td>
+        <td style="text-align:right;font-family:monospace;">Bs ${totDoc.toFixed(2)}</td>
+        <td style="text-align:right;font-family:monospace;">Bs ${totDesc.toFixed(2)}</td>
+        <td style="text-align:right;font-family:monospace;color:var(--ctrl);">Bs ${totICF.toFixed(2)}</td>
+        <td colspan="3"></td>
+      </tr></tfoot>
+    </table>`;
+}
+
+function rcSetDeclarar(fuente,codigo,nroDoc,valor,el){
+  el.className=`decl-sel ${valor==='Declarar'?'decl-si':'decl-no'}`;
+  if(fuente==='SOL'){
+    const s=solicitudes.find(x=>x.codigo===codigo); if(s){s.declarar=valor;localStorage.setItem('ac_sols',JSON.stringify(solicitudes));}
+  } else {
+    const ig=informes.find(x=>x.codigo===codigo);
+    if(ig){const doc=ig.docs?.find(d=>d.nro_doc===nroDoc);if(doc){doc.declarar=valor;localStorage.setItem('ac_igs',JSON.stringify(informes));}}
+  }
+  renderRegCompras();
+}
+
+// ══════════════════════════════════════════════
+// CONSOLIDADO
+// ══════════════════════════════════════════════
+function renderConsolidado(){
+  const desde=document.getElementById('consDesde').value;
+  const hasta=document.getElementById('consHasta').value;
+  const estSol=document.getElementById('consEstSol').value;
+  const estIG=document.getElementById('consEstIG').value;
+  let sols=[...solicitudes].filter(s=>s.estado!=='ANULADO');
+  let igs=[...informes].filter(g=>g.estado!=='ANULADO');
+  if(desde){sols=sols.filter(s=>s.fecha_solicitud>=desde);igs=igs.filter(g=>g.fecha_creacion>=desde);}
+  if(hasta){sols=sols.filter(s=>s.fecha_solicitud<=hasta);igs=igs.filter(g=>g.fecha_creacion<=hasta);}
+  if(estSol) sols=sols.filter(s=>s.estado===estSol);
+  if(estIG) igs=igs.filter(g=>g.estado===estIG);
+  const totSols=sols.reduce((a,s)=>a+Number(s.total||0),0);
+  const totIGs=igs.reduce((a,g)=>a+Number(g.total_gastado||0),0);
+  const container=document.getElementById('consolidadoContainer');
+  container.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+      <div style="background:var(--aqua-light);border-radius:10px;padding:14px 18px;text-align:center;">
+        <div style="font-size:.65rem;text-transform:uppercase;color:var(--m);font-weight:600;margin-bottom:6px;">Solicitudes de Efectivo (${sols.length})</div>
+        <div style="font-size:1.4rem;font-weight:800;color:var(--aqua-dark);font-family:monospace;">Bs ${totSols.toFixed(2)}</div>
+      </div>
+      <div style="background:var(--ing-l);border-radius:10px;padding:14px 18px;text-align:center;">
+        <div style="font-size:.65rem;text-transform:uppercase;color:var(--m);font-weight:600;margin-bottom:6px;">Informes de Gastos (${igs.length})</div>
+        <div style="font-size:1.4rem;font-weight:800;color:var(--ing);font-family:monospace;">Bs ${totIGs.toFixed(2)}</div>
+      </div>
+    </div>
+    <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:12px;padding:16px 20px;text-align:center;margin-bottom:14px;">
+      <div style="font-size:.65rem;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:6px;">Total Consolidado</div>
+      <div style="font-size:1.8rem;font-weight:800;color:#1abc9c;font-family:monospace;">Bs ${(totSols+totIGs).toFixed(2)}</div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>Código</th><th>Fecha</th><th>Tipo</th><th>Descripción</th><th style="text-align:right;">Total</th><th>Estado</th></tr></thead>
+        <tbody>
+          ${sols.map(s=>`<tr><td style="font-family:monospace;font-size:.72rem;">${s.codigo}</td><td>${s.fecha_solicitud||'—'}</td><td><span class="pill SOL">SEF</span></td><td style="font-size:.76rem;">${escH(s.beneficiario)}</td><td style="text-align:right;font-weight:600;">Bs ${Number(s.total).toFixed(2)}</td><td><span style="font-size:.6rem;padding:2px 7px;border-radius:10px;background:#e8f8f5;color:var(--aqua-dark);font-weight:600;">${s.estado}</span></td></tr>`).join('')}
+          ${igs.map(g=>`<tr><td style="font-family:monospace;font-size:.72rem;">${g.codigo}</td><td>${g.fecha_creacion||'—'}</td><td><span class="pill IG">IG</span></td><td style="font-size:.76rem;">${escH(g.motivo||g.empleado)}</td><td style="text-align:right;font-weight:600;">Bs ${Number(g.total_gastado).toFixed(2)}</td><td><span style="font-size:.6rem;padding:2px 7px;border-radius:10px;background:var(--ing-l);color:var(--ing);font-weight:600;">${g.estado}</span></td></tr>`).join('')}
+        </tbody>
+        <tfoot><tr class="tfoot-total"><td colspan="4">TOTAL</td><td style="text-align:right;font-family:monospace;">Bs ${(totSols+totIGs).toFixed(2)}</td><td></td></tr></tfoot>
+      </table>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════
+// POR BENEFICIARIO
+// ══════════════════════════════════════════════
+function renderPorBeneficiario(){
+  const periodo=document.getElementById('benePeriodo').value;
+  const buscar=(document.getElementById('beneBuscar').value||'').toLowerCase();
+  const tipoDoc=document.getElementById('beneTipoDoc').value;
+  const agrupado={};
+  // Desde solicitudes
+  solicitudes.filter(s=>s.estado!=='ANULADO').forEach(s=>{
+    if(periodo&&!(s.fecha_solicitud||'').startsWith(periodo)) return;
+    if(tipoDoc&&s.tipo_doc_beneficiario!==tipoDoc) return;
+    const k=s.nit_ci_beneficiario+'|'+s.beneficiario;
+    if(!agrupado[k]) agrupado[k]={nit:s.nit_ci_beneficiario,nombre:s.beneficiario,total:0,docs:[]};
+    agrupado[k].total+=Number(s.total||0);
+    agrupado[k].docs.push({cod:s.codigo,tipo:'SEF',fecha:s.fecha_solicitud,monto:Number(s.total),tipoDoc:s.tipo_doc_beneficiario});
+  });
+  // Desde informes
+  informes.filter(g=>g.estado!=='ANULADO').forEach(g=>{
+    (g.docs||[]).forEach(doc=>{
+      if(tipoDoc&&doc.tipo!==tipoDoc) return;
+      if(periodo&&!(doc.fecha_doc||g.fecha_creacion||'').startsWith(periodo)) return;
+      const k=(doc.nit||'—')+'|'+(doc.proveedor||'—');
+      if(!agrupado[k]) agrupado[k]={nit:doc.nit||'—',nombre:doc.proveedor||'—',total:0,docs:[]};
+      agrupado[k].total+=Number(doc.total||0);
+      agrupado[k].docs.push({cod:g.codigo,tipo:'IG',fecha:doc.fecha_doc,monto:Number(doc.total),tipoDoc:doc.tipo});
+    });
+  });
+  let keys=Object.keys(agrupado).sort((a,b)=>agrupado[b].total-agrupado[a].total);
+  if(buscar) keys=keys.filter(k=>agrupado[k].nombre.toLowerCase().includes(buscar)||agrupado[k].nit.includes(buscar));
+  const container=document.getElementById('beneContainer');
+  if(!keys.length){container.innerHTML='<div class="empty">Sin datos para los filtros</div>';return;}
+  const totalGeneral=keys.reduce((a,k)=>a+agrupado[k].total,0);
+  container.innerHTML=`<div style="overflow-x:auto;"><table>
+    <thead><tr><th>#</th><th>NIT / CI</th><th>Beneficiario / Proveedor</th><th style="text-align:right;">Total gastado</th><th style="text-align:right;">% del total</th><th>Transacciones</th></tr></thead>
+    <tbody>${keys.map((k,i)=>{const b=agrupado[k];const pct=totalGeneral>0?(b.total/totalGeneral*100).toFixed(1):0;
+      return `<tr><td style="color:var(--m);font-size:.72rem;">${i+1}</td><td style="font-family:monospace;font-size:.72rem;">${b.nit}</td><td style="font-weight:500;">${escH(b.nombre)}</td><td style="text-align:right;font-weight:700;font-family:monospace;">Bs ${b.total.toFixed(2)}</td><td style="text-align:right;"><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;"><div style="width:60px;height:6px;background:var(--b);border-radius:3px;overflow:hidden;"><div style="width:${pct}%;height:100%;background:var(--aqua);border-radius:3px;"></div></div>${pct}%</div></td><td style="font-size:.72rem;color:var(--m);">${b.docs.length} doc(s)</td></tr>`;
+    }).join('')}</tbody>
+    <tfoot><tr class="tfoot-total"><td colspan="3">TOTAL</td><td style="text-align:right;font-family:monospace;">Bs ${totalGeneral.toFixed(2)}</td><td colspan="2"></td></tr></tfoot>
+  </table></div>`;
+}
+
+// ══════════════════════════════════════════════
+// FLUJO DE CAJA
+// ══════════════════════════════════════════════
+function renderFlujoCaja(){
+  const periodo=document.getElementById('flujoPeriodo').value;
+  const tipo=document.getElementById('flujoTipo').value;
+  let recs=[...recibos].filter(r=>r.estado!=='ANULADO');
+  if(tipo) recs=recs.filter(r=>r.tipo===tipo);
+  if(periodo) recs=recs.filter(r=>{
+    // Convertir fecha dd/mm/yyyy a yyyy-mm
+    const f=(r.fecha||'').split('/');
+    const ym=f.length===3?`${f[2]}-${f[1].padStart(2,'0')}`:r.fecha?.substring(0,7)||'';
+    return ym===periodo;
+  });
+  const totalSalidas=recs.filter(r=>r.tipo==='RP'||r.tipo==='REND').reduce((a,r)=>a+Number(r.monto),0);
+  const totalEntradas=recs.filter(r=>r.tipo==='RI').reduce((a,r)=>a+Number(r.monto),0);
+  const neto=totalEntradas-totalSalidas;
+  const container=document.getElementById('flujoContainer');
+  if(!recs.length){container.innerHTML='<div class="empty">Sin movimientos para el período</div>';return;}
+  container.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">
+      <div style="background:var(--rl);border-radius:10px;padding:12px 16px;text-align:center;"><div style="font-size:.62rem;text-transform:uppercase;color:var(--r);font-weight:600;">Salidas (RP + Anticipos)</div><div style="font-size:1.2rem;font-weight:800;color:var(--r);font-family:monospace;">− Bs ${totalSalidas.toFixed(2)}</div></div>
+      <div style="background:var(--ing-l);border-radius:10px;padding:12px 16px;text-align:center;"><div style="font-size:.62rem;text-transform:uppercase;color:var(--ing);font-weight:600;">Entradas (RI)</div><div style="font-size:1.2rem;font-weight:800;color:var(--ing);font-family:monospace;">+ Bs ${totalEntradas.toFixed(2)}</div></div>
+      <div style="background:${neto>=0?'var(--ing-l)':'var(--rl)'};border-radius:10px;padding:12px 16px;text-align:center;border:2px solid ${neto>=0?'#86efac':'#fca5a5'};"><div style="font-size:.62rem;text-transform:uppercase;font-weight:600;color:${neto>=0?'var(--ing)':'var(--r)'};">Flujo Neto</div><div style="font-size:1.2rem;font-weight:800;font-family:monospace;color:${neto>=0?'var(--ing)':'var(--r)'};">${neto>=0?'+':''}Bs ${neto.toFixed(2)}</div></div>
+    </div>
+    <div style="overflow-x:auto;"><table>
+      <thead><tr><th>Referencia</th><th>Fecha</th><th>Tipo</th><th>Concepto</th><th>Persona</th><th style="text-align:right;">Salida</th><th style="text-align:right;">Entrada</th><th>Estado</th></tr></thead>
+      <tbody>${recs.map(r=>`<tr>
+        <td style="font-family:monospace;font-size:.72rem;font-weight:700;color:${r.tipo==='RI'?'var(--ing)':'var(--pag)'};">${r.ref}</td>
+        <td>${r.fecha||'—'}</td>
+        <td><span class="pill ${r.tipo}">${r.tipo}</span></td>
+        <td style="font-size:.75rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escH(r.concepto||'—')}</td>
+        <td style="font-size:.75rem;">${escH(r.persona||'—')}</td>
+        <td style="text-align:right;font-weight:600;color:var(--r);">${r.tipo!=='RI'?'Bs '+Number(r.monto).toFixed(2):'—'}</td>
+        <td style="text-align:right;font-weight:600;color:var(--ing);">${r.tipo==='RI'?'Bs '+Number(r.monto).toFixed(2):'—'}</td>
+        <td><span style="font-size:.6rem;padding:2px 7px;border-radius:10px;background:${r.estado==='PENDIENTE'?'#fff3cd':'var(--ing-l)'};color:${r.estado==='PENDIENTE'?'#856404':'var(--ing)'};font-weight:600;">${r.estado}</span></td>
+      </tr>`).join('')}</tbody>
+      <tfoot><tr class="tfoot-total"><td colspan="5">TOTALES</td><td style="text-align:right;font-family:monospace;color:var(--r);">Bs ${totalSalidas.toFixed(2)}</td><td style="text-align:right;font-family:monospace;color:var(--ing);">Bs ${totalEntradas.toFixed(2)}</td><td></td></tr></tfoot>
+    </table></div>`;
+}
+
+// ══════════════════════════════════════════════
+// PENDIENTES
+// ══════════════════════════════════════════════
+function renderPendientes(){
+  // Sols pendientes
+  const solsPend=solicitudes.filter(s=>!['CONTROLADO','ANULADO'].includes(s.estado));
+  document.getElementById('pendSolContainer').innerHTML=solsPend.length?`<table><thead><tr><th>Código</th><th>Fecha</th><th>Solicitante</th><th>Beneficiario</th><th style="text-align:right;">Total</th><th>Estado</th></tr></thead><tbody>${solsPend.map(s=>`<tr><td style="font-family:monospace;font-size:.72rem;">${s.codigo}</td><td>${s.fecha_solicitud}</td><td>${escH(s.solicitante)}</td><td>${escH(s.beneficiario)}</td><td style="text-align:right;font-weight:600;">Bs ${Number(s.total).toFixed(2)}</td><td><span style="font-size:.6rem;padding:2px 7px;border-radius:10px;background:#fff3cd;color:#856404;font-weight:600;">${s.estado}</span></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Sin solicitudes pendientes</div>';
+  // Anticipos pendientes de rendición
+  const rendPend=recibos.filter(r=>r.tipo==='REND'&&r.estado==='PENDIENTE');
+  document.getElementById('pendRendContainer').innerHTML=rendPend.length?`<table><thead><tr><th>Referencia</th><th>Fecha</th><th>Empleado</th><th>Motivo</th><th style="text-align:right;">Monto</th><th>Fecha est. rendición</th></tr></thead><tbody>${rendPend.map(r=>`<tr><td style="font-family:monospace;font-size:.72rem;color:var(--rend);font-weight:700;">${r.ref}</td><td>${r.fecha}</td><td>${escH(r.persona)}</td><td style="font-size:.75rem;">${escH(r.concepto||'—')}</td><td style="text-align:right;font-weight:600;color:var(--rend);">Bs ${Number(r.monto).toFixed(2)}</td><td style="font-size:.75rem;color:var(--m);">${r.fecha_rendicion_est||'—'}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">Sin anticipos pendientes de rendición</div>';
+  // Informes pendientes
+  const igsPend=informes.filter(g=>!['CONTABILIZADO','ANULADO'].includes(g.estado));
+  document.getElementById('pendIGContainer').innerHTML=igsPend.length?`<table><thead><tr><th>Código</th><th>Fecha</th><th>Empleado</th><th>Motivo</th><th style="text-align:right;">Anticipo</th><th>Estado</th></tr></thead><tbody>${igsPend.map(g=>`<tr><td style="font-family:monospace;font-size:.72rem;">${g.codigo}</td><td>${g.fecha_creacion}</td><td>${escH(g.empleado)}</td><td style="font-size:.75rem;">${escH(g.motivo||'—')}</td><td style="text-align:right;font-weight:600;">Bs ${Number(g.anticipo).toFixed(2)}</td><td><span style="font-size:.6rem;padding:2px 7px;border-radius:10px;background:#dbeafe;color:#1d4ed8;font-weight:600;">${g.estado}</span></td></tr>`).join('')}</tbody></table>`:'<div class="empty">Sin informes pendientes</div>';
+}
+
+// ══════════════════════════════════════════════
+// EXPORTAR CSV
+// ══════════════════════════════════════════════
+function exportarCSV(){
+  const recs=obtenerFacturasUnificadas();
+  if(!recs.length){toast('Sin datos para exportar','err');return;}
+  const headers=['Declarar','Fuente','Tipo Factura','Tipo CF','NIT','Beneficiario','N° Documento','Fecha','Total Doc.','Descuento','ICF (13%)','Cód. Aut.','Cód. Ctrl.','Ref. Pago'];
+  const rows=recs.map(r=>[
+    r.declarar||'Declarar',r.fuente,r.tipo_factura,r.tipo_cf,r.nit,`"${r.beneficiario}"`,r.nro_doc,r.fecha,
+    r.total_doc.toFixed(2),r.descuento.toFixed(2),calcularICF(r).toFixed(2),r.cod_aut,r.cod_ctrl,r.ref_pago
+  ].join(','));
+  const csv=[headers.join(','),...rows].join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`registro_compras_${new Date().toISOString().split('T')[0]}.csv`;a.click();
+  toast('✅ CSV exportado','ok');
+}
+
+// ══════════════════════════════════════════════
+// IMPRESIÓN
+// ══════════════════════════════════════════════
+function imprimirSeccion(titulo,html){
+  const v=window.open('','_blank','width=1000,height=700');
+  v.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Acergal - ${titulo}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>*{margin:0;padding:0;box-sizing:border-box;}body{background:#ddd;font-family:'Inter',Arial,sans-serif;}
+  .pg{width:216mm;min-height:279mm;margin:7mm auto;background:white;padding:10mm 11mm;box-shadow:0 4px 22px rgba(0,0,0,.2);}
+  table{width:100%;border-collapse:collapse;}th,td{padding:5px 8px;border-bottom:1px solid #e9ecef;font-size:7.5pt;}th{font-size:6.5pt;font-weight:700;text-transform:uppercase;color:#6c757d;}
+  @media print{body{background:white;}.pg{margin:0;box-shadow:none;}.np{display:none!important;}@page{size:letter;margin:0;}}
+  </style></head><body>
+  <div class="np" style="text-align:center;padding:9px;background:#16a085;display:flex;gap:10px;justify-content:center;align-items:center;position:sticky;top:0;z-index:99;">
+    <button onclick="window.print()" style="background:white;color:#16a085;border:none;padding:8px 24px;border-radius:7px;font-weight:700;font-size:13px;cursor:pointer;">🖨️ Imprimir / PDF</button>
+    <button onclick="window.close()" style="background:transparent;color:white;border:1px solid white;padding:8px 16px;border-radius:7px;cursor:pointer;">✕</button>
+  </div>
+  <div class="pg">
+    <div style="text-align:center;margin-bottom:8mm;">
+      <div style="display:flex;justify-content:center;align-items:center;gap:6px;"><img src="assets/logo-acergal.png" alt="Logo ACERGAL" style="height:18px;width:auto;object-fit:contain;" onerror="this.style.display='none'"><div style="font-size:10pt;font-weight:800;color:#16a085;">Aceros Galvanizados SRL ACERGAL</div></div>
+      <div style="font-size:8.5pt;color:#6c757d;">${titulo} · Sucursal Zofra (Z3) · ${new Date().toLocaleDateString('es-BO')}</div>
+    </div>
+    ${html}
+  </div></body></html>`);
+  v.document.close();
+}
+function imprimirRegCompras(){imprimirSeccion('Registro de Compras',document.getElementById('regComprasContainer').innerHTML);}
+function imprimirConsolidado(){imprimirSeccion('Reporte Consolidado',document.getElementById('consolidadoContainer').innerHTML);}
+function imprimirBene(){imprimirSeccion('Gastos por Beneficiario',document.getElementById('beneContainer').innerHTML);}
+function imprimirFlujo(){imprimirSeccion('Flujo de Caja',document.getElementById('flujoContainer').innerHTML);}
+
+// Utils
+function switchTab(t,btn){document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));const el=document.getElementById(`tab-${t}`);if(el)el.classList.add('active');if(btn)btn.classList.add('active');if(t==='pendientes')renderPendientes();}
+function escH(s){if(!s)return '';return s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}
+function toast(msg,tipo){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast show ${tipo||'ok'}`;setTimeout(()=>t.classList.remove('show'),3500);}
+
+cargarDatos();
+</script>
+</body>
+</html>

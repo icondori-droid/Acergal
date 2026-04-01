@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acergal - Contabilidad</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f2eb;--s:#fff;--s2:#f8f9fa;--b:#e9ecef;
+  --a:#1a1a2e;--t:#212529;--m:#6c757d;--rad:14px;
+  --aqua:#1abc9c;--aqua-dark:#16a085;--aqua-light:#e8f8f5;
+  --r:#dc3545;--rl:#f8d7da;--go:#ffc107;
+  --pag:#0d6efd;--pag-l:#e7f1ff;
+  --ing:#16a34a;--ing-l:#dcfce7;
+  --rend:#7c3aed;--rend-l:#ede9fe;
+  --ctrl:#6f42c1;--ctrl-l:#f0ebff;
+  --debe:#dc2626;--haber:#16a34a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--t);font-family:'Inter',sans-serif;min-height:100vh;}
+.app{max-width:1380px;margin:0 auto;padding:22px 18px;}
+.hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;padding:14px 16px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:16px;flex-wrap:wrap;gap:12px;box-shadow:0 8px 22px rgba(111,66,193,.08);}
+.hdr h1{font-size:1.5rem;font-weight:700;color:var(--ctrl);}
+.hdr p{font-size:.7rem;color:var(--m);margin-top:3px;}
+.nav-links{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.nav-links a{font-size:.72rem;color:#345;text-decoration:none;font-weight:600;padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.nav-links a:hover{color:var(--ctrl);border-color:rgba(111,66,193,.45);background:rgba(240,235,255,.85);}
+.tabs-nav{display:flex;gap:8px;background:rgba(255,255,255,.32);border:1px solid rgba(255,255,255,.4);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:14px;padding:8px;overflow:auto;margin-bottom:20px;flex-wrap:wrap;box-shadow:0 6px 18px rgba(111,66,193,.08);}
+.tab-btn{background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.55);padding:10px 16px;font-weight:700;font-size:.74rem;color:#44335f;cursor:pointer;white-space:nowrap;border-radius:10px;}
+.tab-btn:hover{background:rgba(240,235,255,.95);border-color:rgba(111,66,193,.45);}
+.tab-btn.active{background:linear-gradient(135deg,var(--ctrl),#5b21b6);color:white;border-color:transparent;box-shadow:0 8px 14px rgba(111,66,193,.25);}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;animation:fi .2s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--s);border:1px solid var(--b);border-radius:var(--rad);padding:20px 24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.sec{font-weight:700;font-size:.72rem;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:14px;padding-left:9px;border-left:3px solid var(--ctrl);color:var(--ctrl);}
+.fg2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:16px;}
+.fg3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px;}
+.fg4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px;}
+.fld{display:flex;flex-direction:column;gap:4px;}
+.fld label{font-size:.6rem;font-weight:600;color:var(--m);text-transform:uppercase;}
+input,select{background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 11px;font-family:'Inter',sans-serif;font-size:.82rem;outline:none;width:100%;}
+input:focus,select:focus{border-color:var(--ctrl);box-shadow:0 0 0 3px rgba(111,66,193,.1);}
+.btn-primary{background:var(--ctrl);color:white;border:none;border-radius:8px;font-weight:600;font-size:.8rem;padding:10px 22px;cursor:pointer;}
+.btn-primary:hover{background:#5b21b6;}
+.btn-secondary{background:transparent;border:1px solid var(--b);color:var(--m);border-radius:8px;font-weight:600;font-size:.8rem;padding:10px 20px;cursor:pointer;}
+.btn-secondary:hover{border-color:var(--ctrl);color:var(--ctrl);}
+.btn-print{background:var(--go);color:var(--a);border:none;border-radius:8px;font-weight:600;font-size:.8rem;padding:10px 20px;cursor:pointer;}
+.form-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:14px;}
+
+/* KPI cards */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+.kpi{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:14px 16px;text-align:center;}
+.kpi.activo{border-top:3px solid var(--aqua);}
+.kpi.pasivo{border-top:3px solid var(--pag);}
+.kpi.gasto{border-top:3px solid var(--r);}
+.kpi.ingreso{border-top:3px solid var(--ing);}
+.kpi.resultado{border-top:3px solid var(--ctrl);}
+.kpi-val{font-size:1.2rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--a);}
+.kpi-lbl{font-size:.6rem;font-weight:600;text-transform:uppercase;color:var(--m);margin-top:3px;}
+
+/* Asientos */
+.asiento-card{border:1px solid var(--b);border-radius:10px;margin-bottom:10px;overflow:hidden;}
+.asiento-head{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--s2);cursor:pointer;user-select:none;}
+.asiento-head:hover{background:var(--ctrl-l);}
+.asiento-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--ctrl);background:var(--ctrl-l);padding:2px 9px;border-radius:20px;}
+.asiento-fecha{font-size:.72rem;color:var(--m);}
+.asiento-desc{flex:1;font-size:.8rem;font-weight:500;}
+.asiento-total{font-size:.82rem;font-weight:700;color:var(--a);font-family:'JetBrains Mono',monospace;}
+.asiento-body{display:none;padding:10px 14px;border-top:1px solid var(--b);}
+.asiento-body.open{display:block;}
+.asiento-toggle{font-size:.7rem;color:var(--m);}
+
+/* Tabla asiento */
+.tbl-asiento{width:100%;border-collapse:collapse;font-size:.78rem;}
+.tbl-asiento th{padding:6px 8px;font-size:.62rem;font-weight:700;text-transform:uppercase;color:var(--m);border-bottom:1px solid var(--b);text-align:left;}
+.tbl-asiento td{padding:5px 8px;border-bottom:1px solid #f5f5f5;vertical-align:middle;}
+.tbl-asiento .debe{color:var(--debe);font-weight:600;text-align:right;}
+.tbl-asiento .haber{color:var(--haber);font-weight:600;text-align:right;}
+.tbl-asiento .cta{font-family:'JetBrains Mono',monospace;font-size:.72rem;}
+.tbl-asiento .tfoot-row{background:var(--s2);font-weight:700;}
+.tbl-asiento .tfoot-row td{border-top:2px solid var(--b);}
+
+/* Mayor */
+.mayor-card{border:1px solid var(--b);border-radius:10px;margin-bottom:14px;overflow:hidden;}
+.mayor-head{background:var(--ctrl);color:white;padding:9px 14px;display:flex;justify-content:space-between;align-items:center;}
+.mayor-cta{font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;}
+.mayor-nombre{font-size:.82rem;font-weight:600;}
+.mayor-saldo{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:800;}
+.tbl-mayor{width:100%;border-collapse:collapse;font-size:.77rem;}
+.tbl-mayor th{padding:6px 8px;font-size:.61rem;font-weight:700;text-transform:uppercase;color:var(--m);border-bottom:1px solid var(--b);}
+.tbl-mayor td{padding:5px 8px;border-bottom:1px solid #f5f5f5;}
+.tbl-mayor .saldo-d{color:var(--debe);}
+.tbl-mayor .saldo-h{color:var(--haber);}
+
+/* Balance / P&G */
+.reporte-2col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.reporte-seccion{border:1px solid var(--b);border-radius:10px;overflow:hidden;}
+.rep-head{padding:10px 16px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;}
+.rep-head.activo{background:#e0f2fe;color:#0369a1;}
+.rep-head.pasivo{background:var(--pag-l);color:var(--pag);}
+.rep-head.capital{background:var(--ctrl-l);color:var(--ctrl);}
+.rep-head.ingresos{background:var(--ing-l);color:var(--ing);}
+.rep-head.gastos{background:var(--rl);color:var(--r);}
+.rep-row{display:flex;justify-content:space-between;padding:7px 16px;border-bottom:1px solid #f5f5f5;font-size:.8rem;}
+.rep-row.total{background:var(--s2);font-weight:700;border-top:2px solid var(--b);}
+.rep-row .cuenta{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--m);margin-right:8px;}
+.rep-val{font-family:'JetBrains Mono',monospace;font-weight:600;}
+.rep-val.d{color:var(--debe);}
+.rep-val.h{color:var(--haber);}
+.resultado-box{background:linear-gradient(135deg,#1a1a2e,#16213e);color:white;border-radius:12px;padding:16px 20px;text-align:center;margin-top:16px;}
+.resultado-box .rl{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;opacity:.6;margin-bottom:6px;}
+.resultado-box .rv{font-size:1.8rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:#1abc9c;}
+
+/* Tabla general */
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:.63rem;font-weight:700;text-transform:uppercase;color:var(--m);padding:10px 12px;border-bottom:1px solid var(--b);}
+td{padding:9px 12px;font-size:.8rem;border-bottom:1px solid var(--b);}
+tr:hover td{background:#faf5ff;}
+.empty{text-align:center;padding:40px;color:var(--m);}
+.pill{display:inline-block;font-size:.58rem;font-weight:700;text-transform:uppercase;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.pill.SOL{background:var(--aqua-light);color:var(--aqua-dark);}
+.pill.IG{background:var(--ing-l);color:var(--ing);}
+.pill.RP{background:var(--pag-l);color:var(--pag);}
+.pill.RI{background:var(--ing-l);color:var(--ing);}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--a);color:#fff;border-radius:10px;padding:12px 20px;font-size:.76rem;z-index:9999;transform:translateY(80px);opacity:0;transition:all .28s;max-width:360px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.ok{background:var(--ctrl);}
+.toast.err{background:var(--r);}
+@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(3,1fr)}.reporte-2col{grid-template-columns:1fr;}}
+@media(max-width:600px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.fg2,.fg3,.fg4{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="app">
+  <div class="hdr">
+    <div><h1>📊 CONTABILIDAD</h1><p>Acergal · Asientos automáticos · Mayor General · Estados Financieros · Sucursal Zofra (Z3)</p></div>
+    <div class="nav-links">
+      <a href="solicitudes.html">📋 Solicitudes</a>
+      <a href="recibos.html">💳 Caja</a>
+      <a href="reportes.html">🧾 Reportes</a>
+      <a href="index.html">⬅ Inicio</a>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi activo"><div class="kpi-val" id="kpiActivo">Bs 0</div><div class="kpi-lbl">Activo (Caja)</div></div>
+    <div class="kpi pasivo"><div class="kpi-val" id="kpiPasivo">Bs 0</div><div class="kpi-lbl">Ctas por Pagar</div></div>
+    <div class="kpi gasto"><div class="kpi-val" id="kpiGastos">Bs 0</div><div class="kpi-lbl">Gastos</div></div>
+    <div class="kpi ingreso"><div class="kpi-val" id="kpiIngresos">Bs 0</div><div class="kpi-lbl">Ingresos / Devoluc.</div></div>
+    <div class="kpi resultado"><div class="kpi-val" id="kpiResultado">Bs 0</div><div class="kpi-lbl">Resultado</div></div>
+  </div>
+
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('asientos',this)">📒 Libro Diario</button>
+    <button class="tab-btn" onclick="switchTab('mayor',this)">📚 Mayor General</button>
+    <button class="tab-btn" onclick="switchTab('balance',this)">⚖️ Balance de Comprobación</button>
+    <button class="tab-btn" onclick="switchTab('pyg',this)">📈 Estado de Resultados</button>
+    <button class="tab-btn" onclick="switchTab('cuentas',this)">🗂️ Plan de Cuentas</button>
+  </div>
+
+  <!-- ═══ LIBRO DIARIO ═══ -->
+  <div id="tab-asientos" class="tab-pane active">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+        <div class="sec" style="margin-bottom:0;">Libro Diario — Asientos Automáticos</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <div class="fld" style="width:140px;"><select id="filtAsiPeriodo" onchange="renderAsientos()"><option value="">Todos los períodos</option></select></div>
+          <div class="fld" style="width:120px;"><select id="filtAsiTipo" onchange="renderAsientos()"><option value="">Todos los tipos</option><option value="SOL">Solicitudes</option><option value="IG">Informes</option><option value="RP">Recibos RP</option><option value="RI">Recibos RI</option></select></div>
+          <button class="btn-primary" onclick="generarAsientosAutomaticos()">⚡ Regenerar asientos</button>
+          <button class="btn-print" onclick="imprimirDiario()">🖨️ Imprimir</button>
+        </div>
+      </div>
+      <div id="asientosContainer"><div class="empty">Cargando asientos...</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ MAYOR GENERAL ═══ -->
+  <div id="tab-mayor" class="tab-pane">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+        <div class="sec" style="margin-bottom:0;">Mayor General</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <div class="fld" style="width:200px;"><input type="text" id="filtroCuenta" placeholder="Filtrar por cuenta..." oninput="renderMayor()"></div>
+          <button class="btn-print" onclick="imprimirMayor()">🖨️ Imprimir</button>
+        </div>
+      </div>
+      <div id="mayorContainer"><div class="empty">Cargando...</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ BALANCE DE COMPROBACIÓN ═══ -->
+  <div id="tab-balance" class="tab-pane">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+        <div class="sec" style="margin-bottom:0;">Balance de Comprobación</div>
+        <div style="display:flex;gap:8px;">
+          <div class="fld" style="width:140px;"><select id="filtBalancePer" onchange="renderBalance()"><option value="">Todo el período</option></select></div>
+          <button class="btn-print" onclick="imprimirBalance()">🖨️ Imprimir</button>
+        </div>
+      </div>
+      <div id="balanceContainer"><div class="empty">Cargando...</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ ESTADO DE RESULTADOS ═══ -->
+  <div id="tab-pyg" class="tab-pane">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+        <div class="sec" style="margin-bottom:0;">Estado de Resultados (P&amp;G)</div>
+        <div style="display:flex;gap:8px;">
+          <div class="fld" style="width:140px;"><select id="filtPYGPer" onchange="renderPYG()"><option value="">Todo el período</option></select></div>
+          <button class="btn-print" onclick="imprimirPYG()">🖨️ Imprimir</button>
+        </div>
+      </div>
+      <div id="pygContainer"><div class="empty">Cargando...</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ PLAN DE CUENTAS ═══ -->
+  <div id="tab-cuentas" class="tab-pane">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+        <div class="sec" style="margin-bottom:0;">Plan de Cuentas</div>
+        <button class="btn-primary" onclick="guardarPlanCuentas()">💾 Guardar cambios</button>
+      </div>
+      <p style="font-size:.78rem;color:var(--m);margin-bottom:14px;">Personaliza las cuentas contables usadas para los asientos automáticos. Usa el formato <strong>X-X-XX-XXX</strong>.</p>
+      <div id="planCuentasForm"></div>
+    </div>
+    <div class="card">
+      <div class="sec">Cuentas personalizadas (Registro de Compras / ICF)</div>
+      <p style="font-size:.78rem;color:var(--m);margin-bottom:12px;">Agrega cuentas adicionales para tipos específicos de gasto.</p>
+      <div id="cuentasCustom" style="max-height:300px;overflow-y:auto;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// PLAN DE CUENTAS DEFAULT
+// ══════════════════════════════════════════════
+const PLAN_DEFAULT={
+  caja:           {num:'1-1-01-001', nombre:'Caja / Efectivo',          tipo:'activo'},
+  anticipo:       {num:'1-1-03-001', nombre:'Anticipos a rendir',       tipo:'activo'},
+  icf:            {num:'1-1-04-001', nombre:'Crédito Fiscal IVA (ICF)', tipo:'activo'},
+  ctasPorPagar:   {num:'2-1-01-001', nombre:'Cuentas por Pagar',        tipo:'pasivo'},
+  gastoGeneral:   {num:'6-1-01-001', nombre:'Gastos Generales',         tipo:'gasto'},
+  gastoViaje:     {num:'6-1-02-001', nombre:'Gastos de Viaje',          tipo:'gasto'},
+  gastoInsumos:   {num:'6-1-03-001', nombre:'Insumos y Materiales',     tipo:'gasto'},
+  gastoServ:      {num:'6-1-04-001', nombre:'Servicios Contratados',    tipo:'gasto'},
+  ingresoDiv:     {num:'7-1-01-001', nombre:'Ingresos Diversos',        tipo:'ingreso'},
+  patrimonio:     {num:'3-1-01-001', nombre:'Capital / Patrimonio',     tipo:'patrimonio'},
+};
+let plan=JSON.parse(localStorage.getItem('ac_plan')||'null')||PLAN_DEFAULT;
+
+// ══════════════════════════════════════════════
+// DATOS
+// ══════════════════════════════════════════════
+let solicitudes=[], informes=[], recibos=[], asientos=[];
+
+function cargarDatos(){
+  solicitudes=JSON.parse(localStorage.getItem('ac_sols')||'[]');
+  informes=JSON.parse(localStorage.getItem('ac_igs')||'[]');
+  recibos=JSON.parse(localStorage.getItem('ac_recibos')||'[]');
+  asientos=JSON.parse(localStorage.getItem('ac_asientos')||'[]');
+  if(!asientos.length) generarAsientosAutomaticos();
+  else{ calcularKPIs(); renderAsientos(); renderMayor(); renderBalance(); renderPYG(); renderPlanCuentas(); cargarPeriodos(); }
+}
+
+// ══════════════════════════════════════════════
+// GENERAR ASIENTOS AUTOMÁTICOS
+// ══════════════════════════════════════════════
+function generarAsientosAutomaticos(){
+  asientos=[];
+  let corr=1;
+  const nextNum=()=>{ const n=`A-${corr.toString().padStart(5,'0')}`; corr++; return n; };
+
+  // 1. RECIBOS DE PAGO por Solicitud (RP)
+  recibos.filter(r=>r.tipo==='RP'&&r.estado!=='ANULADO').forEach(r=>{
+    const sol=solicitudes.find(s=>s.id===r.sol_id);
+    const lineas=[];
+    // Débito gastos por producto
+    if(sol&&sol.productos){
+      sol.productos.forEach(p=>{
+        const cta=p.cuenta_contable||plan.gastoGeneral.num;
+        const ctaNombre=p.cuenta_contable?`Gasto: ${p.producto_servicio}`:plan.gastoGeneral.nombre;
+        lineas.push({cuenta:cta,nombre:ctaNombre,debe:Number(p.total_linea),haber:0,glosa:p.producto_servicio});
+      });
+    } else {
+      lineas.push({cuenta:plan.gastoGeneral.num,nombre:plan.gastoGeneral.nombre,debe:Number(r.monto),haber:0,glosa:r.concepto});
+    }
+    // Si hay ICF (factura con CF)
+    if(sol&&sol.tipo_credito==='Con Derecho a CF'){
+      const neto=Number(sol.total_documento)-Number(sol.descuento||0);
+      const icf=Math.round(neto*(13/113)*100)/100;
+      if(icf>0) lineas.push({cuenta:plan.icf.num,nombre:plan.icf.nombre,debe:icf,haber:0,glosa:'ICF 13%'});
+    }
+    // Crédito caja
+    lineas.push({cuenta:plan.caja.num,nombre:plan.caja.nombre,debe:0,haber:Number(r.monto),glosa:'Pago en efectivo'});
+    asientos.push({
+      num:nextNum(), fecha:r.fecha, tipo:'RP', ref:r.ref,
+      descripcion:`Pago SE ${r.sol_codigo||''} — ${r.concepto}`,
+      lineas, total:Number(r.monto)
+    });
+  });
+
+  // 2. ANTICIPOS CON CARGO A RENDICIÓN (REND)
+  recibos.filter(r=>r.tipo==='REND'&&r.estado!=='ANULADO').forEach(r=>{
+    asientos.push({
+      num:nextNum(), fecha:r.fecha, tipo:'RP', ref:r.ref,
+      descripcion:`Anticipo rendición ${r.ref} — ${r.persona}`,
+      lineas:[
+        {cuenta:plan.anticipo.num, nombre:plan.anticipo.nombre, debe:Number(r.monto), haber:0, glosa:`Anticipo a ${r.persona}`},
+        {cuenta:plan.caja.num, nombre:plan.caja.nombre, debe:0, haber:Number(r.monto), glosa:'Entrega efectivo'}
+      ],
+      total:Number(r.monto)
+    });
+  });
+
+  // 3. INFORMES DE GASTOS — Contabilizados
+  informes.filter(ig=>ig.estado==='CONTABILIZADO').forEach(ig=>{
+    // Débito gastos por cada línea de documento
+    const lineasGasto=[];
+    let totalGastado=0;
+    (ig.docs||[]).forEach(doc=>{
+      (doc.lineas||[]).forEach(l=>{
+        const cta=l.cuenta_contable||plan.gastoGeneral.num;
+        lineasGasto.push({cuenta:cta, nombre:cta===plan.gastoGeneral.num?plan.gastoGeneral.nombre:`Gasto: ${l.descripcion}`, debe:Number(l.monto), haber:0, glosa:l.descripcion});
+        totalGastado+=Number(l.monto);
+        // ICF si aplica
+        if(doc.tipo_cf==='Con Derecho a CF'&&(doc.tipo==='Factura'||doc.tipo==='Nota Fiscal')){
+          const icf=Math.round(Number(l.monto)*(13/113)*100)/100;
+          if(icf>0) lineasGasto.push({cuenta:plan.icf.num, nombre:plan.icf.nombre, debe:icf, haber:0, glosa:'ICF 13%'});
+        }
+      });
+    });
+    // Crédito anticipo a rendir
+    lineasGasto.push({cuenta:plan.anticipo.num, nombre:plan.anticipo.nombre, debe:0, haber:Number(ig.anticipo), glosa:`Anticipo ref: ${ig.ref_anticipo||'—'}`});
+    // Si gastó más → caja paga la diferencia
+    if(Number(ig.saldo)<0){
+      lineasGasto.push({cuenta:plan.caja.num, nombre:plan.caja.nombre, debe:0, haber:Math.abs(Number(ig.saldo)), glosa:'Reembolso diferencia'});
+    }
+    asientos.push({
+      num:nextNum(), fecha:ig.fecha_liquidacion||ig.fecha_creacion, tipo:'IG', ref:ig.codigo,
+      descripcion:`Rendición gastos ${ig.codigo} — ${ig.empleado}`,
+      lineas:lineasGasto, total:totalGastado
+    });
+  });
+
+  // 4. RECIBOS DE INGRESO (RI) — devoluciones
+  recibos.filter(r=>r.tipo==='RI'&&r.estado!=='ANULADO').forEach(r=>{
+    asientos.push({
+      num:nextNum(), fecha:r.fecha, tipo:'RI', ref:r.ref,
+      descripcion:`Ingreso ${r.ref} — ${r.concepto}`,
+      lineas:[
+        {cuenta:plan.caja.num, nombre:plan.caja.nombre, debe:Number(r.monto), haber:0, glosa:'Ingreso en caja'},
+        {cuenta:plan.anticipo.num, nombre:plan.anticipo.nombre, debe:0, haber:Number(r.monto), glosa:`Cierre anticipo ${r.ig_codigo||''}`}
+      ],
+      total:Number(r.monto)
+    });
+  });
+
+  // Ordenar por fecha
+  asientos.sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
+  localStorage.setItem('ac_asientos',JSON.stringify(asientos));
+  calcularKPIs();
+  renderAsientos();
+  renderMayor();
+  renderBalance();
+  renderPYG();
+  renderPlanCuentas();
+  cargarPeriodos();
+  toast('✅ Asientos regenerados','ok');
+}
+
+// ══════════════════════════════════════════════
+// KPIs
+// ══════════════════════════════════════════════
+function calcularKPIs(){
+  let caja=0, anticipo=0, gastos=0, ingresos=0;
+  asientos.forEach(a=>{
+    a.lineas.forEach(l=>{
+      if(l.cuenta===plan.caja.num){caja+=l.debe-l.haber;}
+      if(l.cuenta===plan.anticipo.num){anticipo+=l.debe-l.haber;}
+      if(l.cuenta.startsWith('6-')){gastos+=l.debe-l.haber;}
+      if(l.cuenta.startsWith('7-')){ingresos+=l.haber-l.debe;}
+    });
+  });
+  const resultado=ingresos-gastos;
+  document.getElementById('kpiActivo').textContent=`Bs ${caja.toFixed(2)}`;
+  document.getElementById('kpiPasivo').textContent=`Bs ${anticipo.toFixed(2)}`;
+  document.getElementById('kpiGastos').textContent=`Bs ${gastos.toFixed(2)}`;
+  document.getElementById('kpiIngresos').textContent=`Bs ${ingresos.toFixed(2)}`;
+  document.getElementById('kpiResultado').textContent=`Bs ${resultado.toFixed(2)}`;
+  document.getElementById('kpiResultado').style.color=resultado>=0?'var(--ing)':'var(--r)';
+}
+
+// ══════════════════════════════════════════════
+// RENDER DIARIO
+// ══════════════════════════════════════════════
+function renderAsientos(){
+  const periodo=document.getElementById('filtAsiPeriodo')?.value||'';
+  const tipo=document.getElementById('filtAsiTipo')?.value||'';
+  let list=[...asientos];
+  if(periodo) list=list.filter(a=>(a.fecha||'').substring(0,7)===periodo);
+  if(tipo) list=list.filter(a=>a.tipo===tipo);
+  const container=document.getElementById('asientosContainer');
+  if(!list.length){container.innerHTML='<div class="empty">Sin asientos para los filtros seleccionados</div>';return;}
+  container.innerHTML=list.map((a,idx)=>{
+    const totalDebe=a.lineas.reduce((s,l)=>s+l.debe,0);
+    const totalHaber=a.lineas.reduce((s,l)=>s+l.haber,0);
+    const filas=a.lineas.map(l=>`<tr>
+      <td class="cta">${l.cuenta}</td>
+      <td>${escH(l.nombre)}</td>
+      <td style="font-size:.72rem;color:var(--m);">${escH(l.glosa||'—')}</td>
+      <td class="debe">${l.debe>0?'Bs '+l.debe.toFixed(2):'—'}</td>
+      <td class="haber">${l.haber>0?'Bs '+l.haber.toFixed(2):'—'}</td>
+    </tr>`).join('');
+    return `<div class="asiento-card">
+      <div class="asiento-head" onclick="toggleAsiento('asi_${idx}')">
+        <span class="asiento-num">${a.num}</span>
+        <span class="asiento-fecha">${a.fecha||'—'}</span>
+        <span class="pill ${a.tipo}">${a.tipo}</span>
+        <span class="asiento-desc">${escH(a.descripcion)}</span>
+        <span class="asiento-total">Bs ${Number(a.total).toFixed(2)}</span>
+        <span class="asiento-toggle" id="asi_${idx}_tog">▼</span>
+      </div>
+      <div class="asiento-body" id="asi_${idx}">
+        <table class="tbl-asiento">
+          <thead><tr>
+            <th style="width:130px;">Cuenta</th><th>Nombre</th><th>Glosa</th>
+            <th style="width:110px;text-align:right;color:var(--debe);">Debe</th>
+            <th style="width:110px;text-align:right;color:var(--haber);">Haber</th>
+          </tr></thead>
+          <tbody>${filas}</tbody>
+          <tfoot><tr class="tfoot-row">
+            <td colspan="3" style="text-align:right;font-size:.72rem;color:var(--m);">TOTALES</td>
+            <td class="debe">Bs ${totalDebe.toFixed(2)}</td>
+            <td class="haber">Bs ${totalHaber.toFixed(2)}</td>
+          </tr></tfoot>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleAsiento(id){
+  const el=document.getElementById(id);
+  const tog=document.getElementById(id+'_tog');
+  if(el){el.classList.toggle('open');if(tog)tog.textContent=el.classList.contains('open')?'▲':'▼';}
+}
+
+// ══════════════════════════════════════════════
+// MAYOR GENERAL
+// ══════════════════════════════════════════════
+function renderMayor(){
+  const filtro=(document.getElementById('filtroCuenta')?.value||'').toLowerCase();
+  // Agrupar por cuenta
+  const cuentas={};
+  asientos.forEach(a=>{
+    a.lineas.forEach(l=>{
+      if(!cuentas[l.cuenta]) cuentas[l.cuenta]={num:l.cuenta,nombre:l.nombre,movs:[]};
+      cuentas[l.cuenta].movs.push({fecha:a.fecha,num:a.num,desc:a.descripcion,glosa:l.glosa,debe:l.debe,haber:l.haber});
+    });
+  });
+  const container=document.getElementById('mayorContainer');
+  const keys=Object.keys(cuentas).sort().filter(k=>!filtro||k.includes(filtro)||cuentas[k].nombre.toLowerCase().includes(filtro));
+  if(!keys.length){container.innerHTML='<div class="empty">Sin movimientos</div>';return;}
+  container.innerHTML=keys.map(k=>{
+    const c=cuentas[k];
+    let saldo=0;
+    const filas=c.movs.map(m=>{
+      saldo+=m.debe-m.haber;
+      return `<tr>
+        <td style="font-size:.72rem;">${m.fecha||'—'}</td>
+        <td style="font-family:monospace;font-size:.7rem;">${m.num}</td>
+        <td style="font-size:.75rem;">${escH(m.glosa||m.desc)}</td>
+        <td style="text-align:right;color:var(--debe);font-family:monospace;font-size:.75rem;">${m.debe>0?'Bs '+m.debe.toFixed(2):'—'}</td>
+        <td style="text-align:right;color:var(--haber);font-family:monospace;font-size:.75rem;">${m.haber>0?'Bs '+m.haber.toFixed(2):'—'}</td>
+        <td style="text-align:right;font-family:monospace;font-size:.75rem;font-weight:600;color:${saldo>=0?'var(--debe)':'var(--haber)'};">Bs ${Math.abs(saldo).toFixed(2)} ${saldo>=0?'D':'H'}</td>
+      </tr>`;
+    }).join('');
+    const totalDebe=c.movs.reduce((s,m)=>s+m.debe,0);
+    const totalHaber=c.movs.reduce((s,m)=>s+m.haber,0);
+    const saldoFinal=totalDebe-totalHaber;
+    return `<div class="mayor-card">
+      <div class="mayor-head">
+        <div><span class="mayor-cta">${c.num}</span> &nbsp; <span class="mayor-nombre">${escH(c.nombre)}</span></div>
+        <div class="mayor-saldo" style="color:${saldoFinal>=0?'#86efac':'#fca5a5'};">Saldo: Bs ${Math.abs(saldoFinal).toFixed(2)} ${saldoFinal>=0?'D':'H'}</div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="tbl-mayor">
+          <thead><tr>
+            <th>Fecha</th><th>Asiento</th><th>Descripción</th>
+            <th style="text-align:right;color:var(--debe);">Debe</th>
+            <th style="text-align:right;color:var(--haber);">Haber</th>
+            <th style="text-align:right;">Saldo</th>
+          </tr></thead>
+          <tbody>${filas}</tbody>
+          <tfoot><tr style="background:var(--s2);font-weight:700;">
+            <td colspan="3" style="text-align:right;font-size:.7rem;color:var(--m);padding:6px 12px;">TOTALES</td>
+            <td style="text-align:right;color:var(--debe);font-family:monospace;padding:6px 12px;">Bs ${totalDebe.toFixed(2)}</td>
+            <td style="text-align:right;color:var(--haber);font-family:monospace;padding:6px 12px;">Bs ${totalHaber.toFixed(2)}</td>
+            <td style="text-align:right;font-family:monospace;font-weight:800;color:${saldoFinal>=0?'var(--debe)':'var(--haber)'};padding:6px 12px;">Bs ${Math.abs(saldoFinal).toFixed(2)} ${saldoFinal>=0?'D':'H'}</td>
+          </tr></tfoot>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+// BALANCE DE COMPROBACIÓN
+// ══════════════════════════════════════════════
+function renderBalance(){
+  const cuentas={};
+  asientos.forEach(a=>{
+    a.lineas.forEach(l=>{
+      if(!cuentas[l.cuenta]) cuentas[l.cuenta]={num:l.cuenta,nombre:l.nombre,debe:0,haber:0};
+      cuentas[l.cuenta].debe+=l.debe;
+      cuentas[l.cuenta].haber+=l.haber;
+    });
+  });
+  const keys=Object.keys(cuentas).sort();
+  let totDebe=0,totHaber=0,totSaldoD=0,totSaldoH=0;
+  const filas=keys.map(k=>{
+    const c=cuentas[k];
+    const saldo=c.debe-c.haber;
+    totDebe+=c.debe; totHaber+=c.haber;
+    if(saldo>0) totSaldoD+=saldo; else totSaldoH+=Math.abs(saldo);
+    return `<tr>
+      <td style="font-family:monospace;font-size:.72rem;">${c.num}</td>
+      <td style="font-size:.78rem;">${escH(c.nombre)}</td>
+      <td style="text-align:right;font-family:monospace;color:var(--debe);">Bs ${c.debe.toFixed(2)}</td>
+      <td style="text-align:right;font-family:monospace;color:var(--haber);">Bs ${c.haber.toFixed(2)}</td>
+      <td style="text-align:right;font-family:monospace;color:var(--debe);">${saldo>0?'Bs '+saldo.toFixed(2):'—'}</td>
+      <td style="text-align:right;font-family:monospace;color:var(--haber);">${saldo<0?'Bs '+Math.abs(saldo).toFixed(2):'—'}</td>
+    </tr>`;
+  }).join('');
+  const container=document.getElementById('balanceContainer');
+  if(!keys.length){container.innerHTML='<div class="empty">Sin datos</div>';return;}
+  container.innerHTML=`<div style="overflow-x:auto;">
+    <table>
+      <thead><tr>
+        <th style="width:130px;">Cuenta</th><th>Nombre</th>
+        <th style="text-align:right;color:var(--debe);">Movim. Debe</th>
+        <th style="text-align:right;color:var(--haber);">Movim. Haber</th>
+        <th style="text-align:right;color:var(--debe);">Saldo Deudor</th>
+        <th style="text-align:right;color:var(--haber);">Saldo Acreedor</th>
+      </tr></thead>
+      <tbody>${filas}</tbody>
+      <tfoot><tr style="background:var(--s2);font-weight:700;">
+        <td colspan="2" style="padding:9px 12px;text-align:right;font-size:.72rem;color:var(--m);">TOTALES</td>
+        <td style="padding:9px 12px;text-align:right;font-family:monospace;color:var(--debe);">Bs ${totDebe.toFixed(2)}</td>
+        <td style="padding:9px 12px;text-align:right;font-family:monospace;color:var(--haber);">Bs ${totHaber.toFixed(2)}</td>
+        <td style="padding:9px 12px;text-align:right;font-family:monospace;color:var(--debe);">Bs ${totSaldoD.toFixed(2)}</td>
+        <td style="padding:9px 12px;text-align:right;font-family:monospace;color:var(--haber);">Bs ${totSaldoH.toFixed(2)}</td>
+      </tr></tfoot>
+    </table></div>
+    ${Math.abs(totSaldoD-totSaldoH)<0.01?'<div style="background:var(--ing-l);border:1px solid #86efac;border-radius:8px;padding:9px 14px;margin-top:10px;font-size:.78rem;font-weight:600;color:var(--ing);text-align:center;">✅ Balance cuadrado — Debe = Haber</div>':
+    '<div style="background:var(--rl);border:1px solid #fca5a5;border-radius:8px;padding:9px 14px;margin-top:10px;font-size:.78rem;font-weight:600;color:var(--r);text-align:center;">⚠️ Balance descuadrado — revisa los asientos</div>'}`;
+}
+
+// ══════════════════════════════════════════════
+// ESTADO DE RESULTADOS
+// ══════════════════════════════════════════════
+function renderPYG(){
+  const cuentas={};
+  asientos.forEach(a=>{
+    a.lineas.forEach(l=>{
+      if(!cuentas[l.cuenta]) cuentas[l.cuenta]={num:l.cuenta,nombre:l.nombre,debe:0,haber:0};
+      cuentas[l.cuenta].debe+=l.debe;
+      cuentas[l.cuenta].haber+=l.haber;
+    });
+  });
+  const ingresos=Object.values(cuentas).filter(c=>c.num.startsWith('7-'));
+  const gastos=Object.values(cuentas).filter(c=>c.num.startsWith('6-'));
+  const totalIngresos=ingresos.reduce((s,c)=>s+(c.haber-c.debe),0);
+  const totalGastos=gastos.reduce((s,c)=>s+(c.debe-c.haber),0);
+  const resultado=totalIngresos-totalGastos;
+  const filasIngresos=ingresos.map(c=>`<div class="rep-row"><div><span class="cuenta">${c.num}</span>${escH(c.nombre)}</div><span class="rep-val h">Bs ${(c.haber-c.debe).toFixed(2)}</span></div>`).join('');
+  const filasGastos=gastos.map(c=>`<div class="rep-row"><div><span class="cuenta">${c.num}</span>${escH(c.nombre)}</div><span class="rep-val d">Bs ${(c.debe-c.haber).toFixed(2)}</span></div>`).join('');
+  document.getElementById('pygContainer').innerHTML=`
+    <div style="max-width:700px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:16px;">
+        <div style="display:flex;justify-content:center;align-items:center;gap:6px;"><img src="assets/logo-acergal.png" alt="Logo ACERGAL" style="height:18px;width:auto;object-fit:contain;" onerror="this.style.display='none'"><div style="font-size:.9rem;font-weight:700;color:var(--ctrl);">Aceros Galvanizados SRL ACERGAL</div></div>
+        <div style="font-size:.78rem;color:var(--m);">Estado de Resultados · Sucursal Zofra (Z3)</div>
+        <div style="font-size:.72rem;color:var(--m);">Al ${new Date().toLocaleDateString('es-BO')}</div>
+      </div>
+      <div class="reporte-seccion" style="margin-bottom:12px;">
+        <div class="rep-head ingresos">Ingresos / Devoluciones</div>
+        ${filasIngresos||'<div class="rep-row" style="color:var(--m);font-style:italic;">Sin registros</div>'}
+        <div class="rep-row total"><span>Total Ingresos</span><span class="rep-val h">Bs ${totalIngresos.toFixed(2)}</span></div>
+      </div>
+      <div class="reporte-seccion" style="margin-bottom:16px;">
+        <div class="rep-head gastos">Gastos</div>
+        ${filasGastos||'<div class="rep-row" style="color:var(--m);font-style:italic;">Sin registros</div>'}
+        <div class="rep-row total"><span>Total Gastos</span><span class="rep-val d">Bs ${totalGastos.toFixed(2)}</span></div>
+      </div>
+      <div class="resultado-box">
+        <div class="rl">${resultado>=0?'UTILIDAD DEL PERÍODO':'PÉRDIDA DEL PERÍODO'}</div>
+        <div class="rv" style="color:${resultado>=0?'#1abc9c':'#fca5a5'};">Bs ${Math.abs(resultado).toFixed(2)}</div>
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════
+// PLAN DE CUENTAS
+// ══════════════════════════════════════════════
+function renderPlanCuentas(){
+  const form=document.getElementById('planCuentasForm');
+  form.innerHTML=`<div class="fg2">${Object.entries(plan).map(([key,val])=>`
+    <div class="fld">
+      <label>${val.nombre}</label>
+      <div style="display:flex;gap:6px;">
+        <input type="text" id="plan_${key}_num" value="${val.num}" placeholder="X-X-XX-XXX" style="font-family:monospace;width:140px;">
+        <input type="text" id="plan_${key}_nombre" value="${val.nombre}" style="flex:1;">
+      </div>
+    </div>`).join('')}</div>`;
+}
+function guardarPlanCuentas(){
+  Object.keys(plan).forEach(key=>{
+    const num=document.getElementById(`plan_${key}_num`)?.value?.trim();
+    const nombre=document.getElementById(`plan_${key}_nombre`)?.value?.trim();
+    if(num) plan[key].num=num;
+    if(nombre) plan[key].nombre=nombre;
+  });
+  localStorage.setItem('ac_plan',JSON.stringify(plan));
+  toast('✅ Plan de cuentas guardado','ok');
+  generarAsientosAutomaticos();
+}
+
+// ══════════════════════════════════════════════
+// PERÍODOS para selectores
+// ══════════════════════════════════════════════
+function cargarPeriodos(){
+  const periodos=[...new Set(asientos.map(a=>(a.fecha||'').substring(0,7)).filter(Boolean))].sort().reverse();
+  ['filtAsiPeriodo','filtBalancePer','filtPYGPer'].forEach(id=>{
+    const sel=document.getElementById(id); if(!sel) return;
+    const val=sel.value;
+    sel.innerHTML='<option value="">Todo el período</option>'+periodos.map(p=>`<option value="${p}" ${p===val?'selected':''}>${p}</option>`).join('');
+  });
+}
+
+// ══════════════════════════════════════════════
+// IMPRESIÓN
+// ══════════════════════════════════════════════
+function imprimirSeccion(titulo,html){
+  const v=window.open('','_blank','width=900,height=700');
+  v.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Acergal - ${titulo}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>*{margin:0;padding:0;box-sizing:border-box;}body{background:#ddd;font-family:'Inter',Arial,sans-serif;}
+  .pg{width:216mm;min-height:279mm;margin:7mm auto;background:white;padding:10mm 11mm;box-shadow:0 4px 22px rgba(0,0,0,.2);}
+  table{width:100%;border-collapse:collapse;}th,td{padding:6px 9px;border-bottom:1px solid #e9ecef;font-size:8pt;}th{font-size:7pt;font-weight:700;text-transform:uppercase;color:#6c757d;}
+  @media print{body{background:white;}.pg{margin:0;box-shadow:none;}.np{display:none!important;}@page{size:letter;margin:0;}}
+  </style></head><body>
+  <div class="np" style="text-align:center;padding:9px;background:#6f42c1;display:flex;gap:10px;justify-content:center;align-items:center;position:sticky;top:0;z-index:99;">
+    <button onclick="window.print()" style="background:white;color:#6f42c1;border:none;padding:8px 24px;border-radius:7px;font-weight:700;font-size:13px;cursor:pointer;">🖨️ Imprimir / PDF</button>
+    <button onclick="window.close()" style="background:transparent;color:white;border:1px solid white;padding:8px 16px;border-radius:7px;cursor:pointer;">✕</button>
+  </div>
+  <div class="pg">
+    <div style="text-align:center;margin-bottom:10mm;">
+      <div style="display:flex;justify-content:center;align-items:center;gap:6px;"><img src="assets/logo-acergal.png" alt="Logo ACERGAL" style="height:18px;width:auto;object-fit:contain;" onerror="this.style.display='none'"><div style="font-size:10pt;font-weight:800;color:#6f42c1;">Aceros Galvanizados SRL ACERGAL</div></div>
+      <div style="font-size:9pt;color:#6c757d;">${titulo} · Sucursal Zofra (Z3) · ${new Date().toLocaleDateString('es-BO')}</div>
+    </div>
+    ${html}
+  </div></body></html>`);
+  v.document.close();
+}
+function imprimirDiario(){
+  const rows=asientos.map(a=>`<tr><td style="font-family:monospace;font-size:7pt;">${a.num}</td><td style="font-size:7pt;">${a.fecha||'—'}</td><td style="font-size:7.5pt;">${escH(a.descripcion)}</td><td style="text-align:right;font-family:monospace;font-size:7.5pt;">Bs ${Number(a.total).toFixed(2)}</td></tr>`).join('');
+  imprimirSeccion('Libro Diario',`<table><thead><tr><th>N° Asiento</th><th>Fecha</th><th>Descripción</th><th style="text-align:right;">Total</th></tr></thead><tbody>${rows}</tbody></table>`);
+}
+function imprimirMayor(){imprimirSeccion('Mayor General',document.getElementById('mayorContainer').innerHTML);}
+function imprimirBalance(){imprimirSeccion('Balance de Comprobación',document.getElementById('balanceContainer').innerHTML);}
+function imprimirPYG(){imprimirSeccion('Estado de Resultados',document.getElementById('pygContainer').innerHTML);}
+
+// Utils
+function switchTab(t,btn){document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));const el=document.getElementById(`tab-${t}`);if(el)el.classList.add('active');if(btn)btn.classList.add('active');}
+function escH(s){if(!s)return '';return s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));}
+function toast(msg,tipo){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast show ${tipo||'ok'}`;setTimeout(()=>t.classList.remove('show'),3500);}
+
+cargarDatos();
+</script>
+</body>
+</html>
